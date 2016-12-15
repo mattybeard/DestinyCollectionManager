@@ -1,0 +1,1 @@
+C:\Users\MattB\Source\Repos\DestinyCollectionManager\BungieLoginApp\BungieLoginApp.csproj;x86
