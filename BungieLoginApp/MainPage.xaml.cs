@@ -32,6 +32,7 @@ namespace BungieLoginApp
         private int _membershipType;
         private string[] _characterIds;
 
+
         public MainPage()
         {
             InitializeComponent();
@@ -77,9 +78,45 @@ namespace BungieLoginApp
             _characterIds = characterDetails.Response.data.characters.Select(c => c.characterBase.characterId).ToArray();
         }
 
-        private void Emblems_Click(object sender, RoutedEventArgs e)
+        private async void Emblems_Click(object sender, RoutedEventArgs e)
         {
-            //var result = await BungieClient.Instance.RunGetAsync<GamertagResponse>("Platform/User/GetBungieNetUser/");
+            var emblemsNeeded = new Dictionary<string, List<long>>();
+
+            foreach (var character in _characterIds)
+            {
+                var emblemsCollection = await BungieClient.Instance.RunGetAsync<VendorPlatformResponse>($"Platform/Destiny/{_membershipType}/MyAccount/Character/{character}/Vendor/2420628997/");
+                foreach (var category in emblemsCollection.Response.data.saleItemCategories)
+                {
+                    if (!emblemsNeeded.ContainsKey(category.categoryTitle))
+                    {
+                        emblemsNeeded.Add(category.categoryTitle, new List<long>());
+
+                        foreach (var item in category.saleItems)
+                        {
+                            if (item.unlockStatuses.Any(i => !i.isSet))
+                                emblemsNeeded[category.categoryTitle].Add(item.item.itemHash);
+                        }
+                    }
+                    else
+                    {
+                        var unlocked = category.saleItems.Where(i => !i.unlockStatuses.Any() || i.unlockStatuses.All(s => s.isSet)).Select(i => i.item.itemHash);
+                        emblemsNeeded[category.categoryTitle].RemoveAll(i => unlocked.Contains(i));
+                    }
+                }
+            }
+
+            foreach (var group in emblemsNeeded)
+            {
+                if (group.Value.Any())
+                {
+                    ResultsTest.Items.Add($"{group.Key} cateory");
+                    foreach (var emblem in group.Value)
+                    {
+                        var itemResult = await BungieClient.Instance.RunGetAsync<InventoryItemPlatformResponse>($"/Platform/Destiny/Manifest/InventoryItem/{emblem}/");
+                        ResultsTest.Items.Add($"{itemResult.Response.data.inventoryItem.itemName} still needed");
+                    }
+                }
+            }
         }
     }
 }

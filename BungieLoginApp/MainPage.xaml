@@ -8,7 +8,7 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
             <Button Width="200" Margin="20" Content="Login" Click="Login_Click" />
             <TextBlock Name="Status"></TextBlock>
             <Button Margin="20" Content="Print Gamertag" Width="200" Click="Print_Click" />
@@ -17,5 +17,6 @@
             <Button Margin="20" Content="Get Emblems" Width="200" Click="Emblems_Click" />
             <TextBlock Name="EmblemsResult"></TextBlock>
         </StackPanel>
+        <ListBox x:Name="ResultsTest" HorizontalAlignment="Left" Height="598" Margin="135,301,0,0" VerticalAlignment="Top" Width="1183"/>
     </Grid>
 </Page>

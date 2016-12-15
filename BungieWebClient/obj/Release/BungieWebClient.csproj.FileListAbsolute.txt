@@ -1,0 +1,6 @@
+C:\Users\MattB\Source\Repos\DestinyCollectionManager\BungieWebClient\bin\Release\BungieWebClient.dll
+C:\Users\MattB\Source\Repos\DestinyCollectionManager\BungieWebClient\bin\Release\BungieWebClient.pdb
+C:\Users\MattB\Source\Repos\DestinyCollectionManager\BungieWebClient\bin\Release\Newtonsoft.Json.dll
+C:\Users\MattB\Source\Repos\DestinyCollectionManager\BungieWebClient\bin\Release\Newtonsoft.Json.xml
+C:\Users\MattB\Source\Repos\DestinyCollectionManager\BungieWebClient\obj\Release\BungieWebClient.dll
+C:\Users\MattB\Source\Repos\DestinyCollectionManager\BungieWebClient\obj\Release\BungieWebClient.pdb

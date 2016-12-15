@@ -102,8 +102,10 @@
     <Compile Include="Model\AccessObjects.cs" />
     <Compile Include="Model\CharacterResponse.cs" />
     <Compile Include="Model\GamertagResponse.cs" />
+    <Compile Include="Model\InventoryItemPlatformResponse.cs" />
     <Compile Include="Model\MembershipResponse.cs" />
     <Compile Include="Model\RequestTypes.cs" />
+    <Compile Include="Model\VendorPlatformResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>

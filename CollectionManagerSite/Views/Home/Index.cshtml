@@ -1,0 +1,7 @@
+﻿@model List<BungieWebClient.Model.InventoryItem.InventoryItemPlatformResponse>
+
+HOME AND AUTHORIZED!!
+@foreach (var emblem in Model)
+{
+    <p>@emblem.Response.data.inventoryItem.itemName</p><br/>
+}

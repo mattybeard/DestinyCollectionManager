@@ -28,13 +28,13 @@
     <AppXManifest Include="C:\Users\MattB\Source\Repos\DestinyCollectionManager\BungieLoginApp\bin\x86\Debug\Core\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2016-12-15T11:05:34.546</Modified>
+      <Modified>2016-12-15T14:42:52.067</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="C:\Users\MattB\Source\Repos\DestinyCollectionManager\BungieLoginApp\bin\x86\Debug\BungieLoginApp.exe">
       <PackagePath>entrypoint\BungieLoginApp.exe</PackagePath>
-      <Modified>2016-12-15T11:05:33.943</Modified>
+      <Modified>2016-12-15T14:42:51.660</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\MattB\.nuget\packages\Microsoft.CSharp\4.0.0\lib\netcore50\Microsoft.CSharp.dll">
       <PackagePath>Microsoft.CSharp.dll</PackagePath>
@@ -492,7 +492,7 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\MattB\Source\Repos\DestinyCollectionManager\BungieLoginApp\bin\x86\Debug\BungieLoginApp.xr.xml">
       <PackagePath>BungieLoginApp.xr.xml</PackagePath>
-      <Modified>2016-12-15T09:32:10.473</Modified>
+      <Modified>2016-12-15T11:36:42.543</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Windows Kits\10\UnionMetadata\Windows.winmd">
       <PackagePath>WinMetadata\Windows.winmd</PackagePath>
@@ -500,11 +500,11 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\MattB\Source\Repos\DestinyCollectionManager\BungieLoginApp\bin\x86\Debug\resources.pri">
       <PackagePath>resources.pri</PackagePath>
-      <Modified>2016-12-15T11:05:34.397</Modified>
+      <Modified>2016-12-15T11:55:32.150</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\MattB\Source\Repos\DestinyCollectionManager\BungieLoginApp\bin\x86\Debug\Core\BungieLoginApp.exe">
       <PackagePath>BungieLoginApp.exe</PackagePath>
-      <Modified>2016-12-15T11:05:34.542</Modified>
+      <Modified>2016-12-15T14:42:52.062</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

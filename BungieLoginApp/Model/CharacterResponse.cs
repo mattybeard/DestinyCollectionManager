@@ -23,7 +23,7 @@ namespace BungieLoginApp.Model
 
     public class STATDEFENSE
     {
-        public object statHash { get; set; }
+        public long statHash { get; set; }
         public int value { get; set; }
         public int maximumValue { get; set; }
     }
@@ -181,7 +181,7 @@ namespace BungieLoginApp.Model
 
     public class Item
     {
-        public object itemHash { get; set; }
+        public long itemHash { get; set; }
         public string itemId { get; set; }
         public int quantity { get; set; }
         public int damageType { get; set; }
