@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using BungieWebClient.Model.Authentication;
+using BungieWebClient.Model.Gamertag;
 
 namespace BungieWebClient
 {
@@ -23,6 +24,8 @@ namespace BungieWebClient
         private string _authCode;
         private string _accessToken;
         private string _refreshToken;
+        public string AccountName;
+        public int MembershipType;
 
         public BungieClient(string accessToken, string refreshToken) : this()
         {
@@ -134,6 +137,7 @@ namespace BungieWebClient
             {
                 _accessToken = response.Response.AccessToken.Value;
                 _refreshToken = response.Response.RefreshToken.Value;
+                GetUserDetails();
             }
             return response;
         }
@@ -144,9 +148,23 @@ namespace BungieWebClient
             if (response?.ErrorCode == Success)
             {
                 _accessToken = response.Response.AccessToken.Value;
-                _refreshToken = response.Response.RefreshToken.Value;
+                _refreshToken = response.Response.RefreshToken.Value;                
             }
+
+            GetUserDetails();
+
             return response;
+        }
+
+        public void GetUserDetails()
+        {
+            var response = RunGetAsync<GamertagResponse>("Platform/User/GetBungieNetUser/");
+            if (response?.ErrorCode == Success)
+            {
+                AccountName = response.Response?.GamerTag ?? response.Response?.PsnId ?? "";
+                MembershipType = response.Response?.GamerTag != null ? 1 : 2;
+
+            }
         }
     }
 }

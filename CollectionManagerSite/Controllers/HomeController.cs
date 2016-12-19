@@ -1,85 +1,148 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using BungieWebClient;
+using BungieWebClient.Model.Advisors;
 using BungieWebClient.Model.Character;
 using BungieWebClient.Model.InventoryItem;
 using BungieWebClient.Model.Membership;
 using BungieWebClient.Model.Vendor;
+using CollectionManagerSite.Models;
+using SaleItem = BungieWebClient.Model.Vendor.SaleItem;
 
 namespace CollectionManagerSite.Controllers
 {
     public class HomeController : Controller
     {
         private BungieClient webClient { get; set; }
-        // GET: Home
+
         public ActionResult Index()
         {
             var authorised = System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"] != null && System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"] != null;
 
             if (authorised)
-            {
+            {                
                 if (webClient == null)
                     webClient = new BungieClient(System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"].Value, System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"].Value);
 
-                var emblems = GetEmblems();
+                webClient.RefreshAccessToken();
 
-                return View(emblems);
+                var characterIds = RetriveCharacterDetails();
+                if (characterIds == null)
+                    return RedirectToAction("Index", "Authentication");
+
+                var evaItems = GetVendorMetadata(134701236);
+                var shaders = GetVendorItems(characterIds, "Shader", 2420628997);
+                var emblems = GetVendorItems(characterIds, "Emblem", 3301500998);
+
+                // Do we have any currently being sold?!
+                var currentlyListed = GetCurrentlyForSale(evaItems, shaders, "Shaders");
+                currentlyListed.AddRange(GetCurrentlyForSale(evaItems, emblems, "Emblems"));
+
+                if (shaders == null || emblems == null)
+                    return RedirectToAction("Index", "Authentication");
+
+                return View(currentlyListed.Union(emblems).Union(shaders).ToList());
             }
 
             return RedirectToAction("Index", "Authentication");
         }
 
+        private List<MissingItemModel> GetCurrentlyForSale(AdvisorsEndpoint allEvaItems, List<MissingItemModel> missingItems, string type)
+        {
+            var currentEvaSaleItems = allEvaItems.Response.data.vendor.saleItemCategories.FirstOrDefault(sic => sic.categoryTitle == type);
+            if (currentEvaSaleItems == null)
+                return new List<MissingItemModel>();
+
+            var currentEvaItems = currentEvaSaleItems.saleItems.Select(si => si.item.itemHash).ToList();
+            var items = missingItems.Where(ms => currentEvaItems.Contains(ms.Hash));
+
+            return items.Select(i => new MissingItemModel()
+            {
+                Type = $"Currently For Sale!",
+                Section = i.Section,
+                Name = i.Name,
+                Icon = i.Icon,
+                UnlockHashes = i.UnlockHashes,
+                Hash = i.Hash
+            }).ToList();
+        }
+
+        private AdvisorsEndpoint GetVendorMetadata(long vendorId)
+        {
+            var vendorDetails = webClient.RunGetAsync<AdvisorsEndpoint>($"Platform/Destiny/Vendors/{vendorId}/Metadata/");
+
+            return vendorDetails;
+        }
+
         private string[] RetriveCharacterDetails()
         {
-            var membershipDetails = webClient.RunGetAsync<MembershipResponse>($"Platform/Destiny/SearchDestinyPlayer/1/mbeard/");
-            var _membershipId = membershipDetails?.Response?.First().membershipId;
-            var _membershipType = (int)membershipDetails?.Response?.First().membershipType;
+            var membershipDetails = webClient.RunGetAsync<MembershipResponse>($"Platform/Destiny/SearchDestinyPlayer/{webClient.MembershipType}/{webClient.AccountName}/");
+            var _membershipId = membershipDetails?.Response?.FirstOrDefault();
+            if (_membershipId == null)
+            {
+                // this should be use the refresh token but for now lets re-authenticate
+                return null;
+            }
+            
+            webClient.MembershipType = _membershipId.membershipType;
 
-            var characterDetails = webClient.RunGetAsync<CharacterEndpoint>($"Platform/Destiny/{_membershipType}/Account/{_membershipId}/Summary/");
+            var characterDetails = webClient.RunGetAsync<CharacterEndpoint>($"Platform/Destiny/{webClient.MembershipType}/Account/{_membershipId.membershipId}/Summary/");
             var _characterIds = characterDetails.Response.data.characters.Select(c => c.characterBase.characterId).ToArray();
 
             return _characterIds;
         }
-
-        private List<InventoryItemPlatformResponse> GetEmblems()
+       
+        private List<MissingItemModel> GetVendorItems(string[] characterIds, string type, long vendorId)
         {
-            var emblemsNeeded = new Dictionary<string, List<long>>();
-            var _characterIds = RetriveCharacterDetails();
-
-            foreach (var character in _characterIds)
+            var itemsNeeded = new Dictionary<string, List<SaleItem>>();
+            foreach (var character in characterIds)
             {
-                var emblemsCollection = webClient.RunGetAsync<VendorPlatformResponse>($"Platform/Destiny/1/MyAccount/Character/{character}/Vendor/2420628997/");
-                foreach (var category in emblemsCollection.Response.data.saleItemCategories)
+                var itemsCollection = webClient.RunGetAsync<VendorPlatformResponse>($"Platform/Destiny/{webClient.MembershipType}/MyAccount/Character/{character}/Vendor/{vendorId}/");
+                if(itemsCollection.ErrorCode > 1)
+                    throw new InvalidOperationException($"Problem getting your {type}s.");
+
+                foreach (var category in itemsCollection.Response.data.saleItemCategories)
                 {
-                    if (!emblemsNeeded.ContainsKey(category.categoryTitle))
+                    if (!itemsNeeded.ContainsKey(category.categoryTitle))
                     {
-                        emblemsNeeded.Add(category.categoryTitle, new List<long>());
+                        itemsNeeded.Add(category.categoryTitle, new List<SaleItem>());
 
                         foreach (var item in category.saleItems)
                         {
                             if (item.unlockStatuses.Any(i => !i.isSet))
-                                emblemsNeeded[category.categoryTitle].Add(item.item.itemHash);
+                                itemsNeeded[category.categoryTitle].Add(item);
                         }
                     }
                     else
                     {
-                        var unlocked = category.saleItems.Where(i => !i.unlockStatuses.Any() || i.unlockStatuses.All(s => s.isSet)).Select(i => i.item.itemHash);
-                        emblemsNeeded[category.categoryTitle].RemoveAll(i => unlocked.Contains(i));
+                        var unlocked = category.saleItems.Where(i => !i.unlockStatuses.Any() || i.unlockStatuses.All(s => s.isSet));
+                        itemsNeeded[category.categoryTitle].RemoveAll(i => unlocked.Contains(i));
                     }
                 }
             }
 
-            var results = new List<InventoryItemPlatformResponse>();
-            foreach (var group in emblemsNeeded)
+            var results = new List<MissingItemModel>();
+            foreach (var group in itemsNeeded)
             {
                 if (group.Value.Any())
                 {
-                    foreach (var emblem in group.Value)
+                    foreach (var item in group.Value)
                     {
-                        results.Add(webClient.RunGetAsync<InventoryItemPlatformResponse>($"/Platform/Destiny/Manifest/InventoryItem/{emblem}/"));
+                        var inventoryItem = webClient.RunGetAsync<InventoryItemPlatformResponse>($"/Platform/Destiny/Manifest/InventoryItem/{item.item.itemHash}/");
+                        var result = new MissingItemModel()
+                        {
+                            Type = type,
+                            Section = group.Key,
+                            Hash = inventoryItem.Response.data.inventoryItem.itemHash,
+                            Name = inventoryItem.Response.data.inventoryItem.itemName,
+                            Icon = inventoryItem.Response.data.inventoryItem.icon,
+                            UnlockHashes = item.unlockStatuses.Select(i => i.unlockFlagHash)
+                        };
+                        results.Add(result);
                     }
                 }
             }

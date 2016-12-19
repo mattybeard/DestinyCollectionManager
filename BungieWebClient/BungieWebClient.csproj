@@ -45,8 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BungieWebClient.cs" />
+    <Compile Include="Model\Advisors\AdvisorsEndpoint.cs" />
     <Compile Include="Model\Authentication\Response.cs" />
     <Compile Include="Model\Character\Response.cs" />
+    <Compile Include="Model\Gamertag\GamertagResponse.cs" />
     <Compile Include="Model\InventoryItem\Response.cs" />
     <Compile Include="Model\Membership\Response.cs" />
     <Compile Include="Model\Vendor\Vendor.cs" />

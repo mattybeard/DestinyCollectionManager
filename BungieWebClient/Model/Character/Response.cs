@@ -98,22 +98,6 @@ namespace BungieWebClient.Model.Character
         public STATOPTICS STAT_OPTICS { get; set; }
     }
 
-    public class Customization
-    {
-        public object personality { get; set; }
-        public long face { get; set; }
-        public object skinColor { get; set; }
-        public int lipColor { get; set; }
-        public long eyeColor { get; set; }
-        public long hairColor { get; set; }
-        public object featureColor { get; set; }
-        public object decalColor { get; set; }
-        public bool wearHelmet { get; set; }
-        public int hairIndex { get; set; }
-        public int featureIndex { get; set; }
-        public int decalIndex { get; set; }
-    }
-
     public class Equipment
     {
         public object itemHash { get; set; }
@@ -140,7 +124,6 @@ namespace BungieWebClient.Model.Character
         public int currentActivityHash { get; set; }
         public int lastCompletedStoryHash { get; set; }
         public Stats stats { get; set; }
-        public Customization customization { get; set; }
         public int grimoireScore { get; set; }
         public PeerView peerView { get; set; }
         public int genderType { get; set; }
