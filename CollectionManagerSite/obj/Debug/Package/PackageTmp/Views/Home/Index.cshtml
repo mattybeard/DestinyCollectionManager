@@ -1,16 +1,29 @@
 ﻿@model List<CollectionManagerSite.Models.MissingItemModel>
-
+@{
+    int groupings = 3;
+    ViewBag.Title = "Missing Shaders & Emblems";
+   
+}
 @foreach (var type in Model.GroupBy(c => c.Type))
 {
-    <h1>@type.Key</h1>
+    <h1>@type.Key</h1>    
     foreach (var group in type.GroupBy(t => t.Section))
     {
         <h2>@group.Key</h2>
-        foreach (var item in group)
-         {
-             <img src="@($"http://www.bungie.net/{item.Icon}")" alt="shader"/>
-             <p>@item.Name</p>
-             <br/>
-         }
+        <div>
+            @{ var grouped = group.Select((x, i) => new {x, i = i/groupings}).GroupBy(x => x.i, x => x.x); }
+            @foreach (var items in grouped)
+            {
+                <div class="row">
+                    @foreach (var item in items)
+                    {
+                        <div class="col-sm-4 text-center">
+                            <img src="@($"http://www.bungie.net/{item.Icon}")" alt="shader" />
+                            <p>@item.Name</p>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
     }
 }

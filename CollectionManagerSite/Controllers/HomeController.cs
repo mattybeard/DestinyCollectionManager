@@ -35,12 +35,17 @@ namespace CollectionManagerSite.Controllers
                     return RedirectToAction("Index", "Authentication");
 
                 var evaItems = GetVendorMetadata(134701236);
+                var petraItems = GetVendorMetadata(1410745145);
+
                 var shaders = GetVendorItems(characterIds, "Shader", 2420628997);
                 var emblems = GetVendorItems(characterIds, "Emblem", 3301500998);
 
                 // Do we have any currently being sold?!
-                var currentlyListed = GetCurrentlyForSale(evaItems, shaders, "Shaders");
-                currentlyListed.AddRange(GetCurrentlyForSale(evaItems, emblems, "Emblems"));
+                var currentlyListed = GetCurrentlyForSale(evaItems, shaders, "Shaders", "Eva Shaders");
+                currentlyListed.AddRange(GetCurrentlyForSale(evaItems, emblems, "Emblems", "Eva Emblems"));
+                currentlyListed.AddRange(GetCurrentlyForSale(petraItems, emblems, "Queen's Wrath: Rank 1", "Petra Emblems"));
+                currentlyListed.AddRange(GetCurrentlyForSale(petraItems, shaders, "Queen's Wrath: Rank 2", "Petra Shaders"));
+                currentlyListed.AddRange(GetCurrentlyForSale(petraItems, shaders, "Queen's Wrath: Rank 3", "Petra Shaders"));
 
                 if (shaders == null || emblems == null)
                     return RedirectToAction("Index", "Authentication");
@@ -51,9 +56,9 @@ namespace CollectionManagerSite.Controllers
             return RedirectToAction("Index", "Authentication");
         }
 
-        private List<MissingItemModel> GetCurrentlyForSale(AdvisorsEndpoint allEvaItems, List<MissingItemModel> missingItems, string type)
+        private List<MissingItemModel> GetCurrentlyForSale(AdvisorsEndpoint allEvaItems, List<MissingItemModel> missingItems, string itemCategory, string type)
         {
-            var currentEvaSaleItems = allEvaItems.Response.data.vendor.saleItemCategories.FirstOrDefault(sic => sic.categoryTitle == type);
+            var currentEvaSaleItems = allEvaItems.Response.data.vendor.saleItemCategories.FirstOrDefault(sic => sic.categoryTitle == itemCategory);
             if (currentEvaSaleItems == null)
                 return new List<MissingItemModel>();
 
@@ -62,7 +67,7 @@ namespace CollectionManagerSite.Controllers
 
             return items.Select(i => new MissingItemModel()
             {
-                Type = $"Currently For Sale!",
+                Type = $"{type} currently for sale!",
                 Section = i.Section,
                 Name = i.Name,
                 Icon = i.Icon,
@@ -119,8 +124,8 @@ namespace CollectionManagerSite.Controllers
                     }
                     else
                     {
-                        var unlocked = category.saleItems.Where(i => !i.unlockStatuses.Any() || i.unlockStatuses.All(s => s.isSet));
-                        itemsNeeded[category.categoryTitle].RemoveAll(i => unlocked.Contains(i));
+                        var unlocked = category.saleItems.Where(i => !i.unlockStatuses.Any() || i.unlockStatuses.All(s => s.isSet)).Select(i => i.item.itemHash);
+                        itemsNeeded[category.categoryTitle].RemoveAll(i => unlocked.Contains(i.item.itemHash));
                     }
                 }
             }
@@ -142,6 +147,10 @@ namespace CollectionManagerSite.Controllers
                             Icon = inventoryItem.Response.data.inventoryItem.icon,
                             UnlockHashes = item.unlockStatuses.Select(i => i.unlockFlagHash)
                         };
+
+                        //var unlockHash = item.unlockStatuses.First().unlockFlagHash;
+                        //inventoryItem = webClient.RunGetAsync<InventoryItemPlatformResponse>($"/Platform/Destiny/Manifest/UnlockFlag/{unlockHash}/");
+
                         results.Add(result);
                     }
                 }

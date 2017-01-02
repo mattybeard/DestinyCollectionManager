@@ -15,12 +15,7 @@ namespace CollectionManagerSite.Controllers
             return View();
         }
 
-        public ActionResult StartAuth()
-        {
-            return Redirect("https://www.bungie.net/en/Application/Authorize/11093");
-        }
-
-        public ActionResult ConfirmAuth(string code)
+       public ActionResult ConfirmAuth(string code)
         {
             if(code == null)
                 throw new AccessViolationException();
