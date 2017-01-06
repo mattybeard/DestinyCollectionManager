@@ -121,7 +121,7 @@ namespace BungieWebClient.Model.Character
         public object raceHash { get; set; }
         public object genderHash { get; set; }
         public object classHash { get; set; }
-        public int currentActivityHash { get; set; }
+        public long currentActivityHash { get; set; }
         public int lastCompletedStoryHash { get; set; }
         public Stats stats { get; set; }
         public int grimoireScore { get; set; }
