@@ -30,56 +30,56 @@ namespace BungieLoginApp.Model
 
     public class STATINTELLECT
     {
-        public int statHash { get; set; }
+        public long statHash { get; set; }
         public int value { get; set; }
         public int maximumValue { get; set; }
     }
 
     public class STATDISCIPLINE
     {
-        public int statHash { get; set; }
+        public long statHash { get; set; }
         public int value { get; set; }
         public int maximumValue { get; set; }
     }
 
     public class STATSTRENGTH
     {
-        public object statHash { get; set; }
+        public long statHash { get; set; }
         public int value { get; set; }
         public int maximumValue { get; set; }
     }
 
     public class STATLIGHT
     {
-        public object statHash { get; set; }
+        public long statHash { get; set; }
         public int value { get; set; }
         public int maximumValue { get; set; }
     }
 
     public class STATARMOR
     {
-        public int statHash { get; set; }
+        public long statHash { get; set; }
         public int value { get; set; }
         public int maximumValue { get; set; }
     }
 
     public class STATAGILITY
     {
-        public object statHash { get; set; }
+        public long statHash { get; set; }
         public int value { get; set; }
         public int maximumValue { get; set; }
     }
 
     public class STATRECOVERY
     {
-        public int statHash { get; set; }
+        public long statHash { get; set; }
         public int value { get; set; }
         public int maximumValue { get; set; }
     }
 
     public class STATOPTICS
     {
-        public object statHash { get; set; }
+        public long statHash { get; set; }
         public int value { get; set; }
         public int maximumValue { get; set; }
     }
@@ -115,7 +115,7 @@ namespace BungieLoginApp.Model
 
     public class Equipment
     {
-        public object itemHash { get; set; }
+        public long itemHash { get; set; }
         public List<object> dyes { get; set; }
     }
 
@@ -133,18 +133,18 @@ namespace BungieLoginApp.Model
         public string minutesPlayedThisSession { get; set; }
         public string minutesPlayedTotal { get; set; }
         public int powerLevel { get; set; }
-        public object raceHash { get; set; }
-        public object genderHash { get; set; }
-        public object classHash { get; set; }
-        public int currentActivityHash { get; set; }
-        public int lastCompletedStoryHash { get; set; }
+        public long raceHash { get; set; }
+        public long genderHash { get; set; }
+        public long classHash { get; set; }
+        public long currentActivityHash { get; set; }
+        public long lastCompletedStoryHash { get; set; }
         public Stats stats { get; set; }
         public Customization customization { get; set; }
         public int grimoireScore { get; set; }
         public PeerView peerView { get; set; }
         public int genderType { get; set; }
         public int classType { get; set; }
-        public object buildStatGroupHash { get; set; }
+        public long buildStatGroupHash { get; set; }
     }
 
     public class LevelProgression
@@ -156,7 +156,7 @@ namespace BungieLoginApp.Model
         public int step { get; set; }
         public int progressToNextLevel { get; set; }
         public int nextLevelAt { get; set; }
-        public int progressionHash { get; set; }
+        public long progressionHash { get; set; }
     }
 
     public class Character
@@ -165,7 +165,7 @@ namespace BungieLoginApp.Model
         public LevelProgression levelProgression { get; set; }
         public string emblemPath { get; set; }
         public string backgroundPath { get; set; }
-        public object emblemHash { get; set; }
+        public long emblemHash { get; set; }
         public int characterLevel { get; set; }
         public int baseCharacterLevel { get; set; }
         public bool isPrestigeLevel { get; set; }
@@ -174,7 +174,7 @@ namespace BungieLoginApp.Model
 
     public class PrimaryStat
     {
-        public object statHash { get; set; }
+        public long statHash { get; set; }
         public int value { get; set; }
         public int maximumValue { get; set; }
     }
@@ -185,18 +185,18 @@ namespace BungieLoginApp.Model
         public string itemId { get; set; }
         public int quantity { get; set; }
         public int damageType { get; set; }
-        public object damageTypeHash { get; set; }
+        public long damageTypeHash { get; set; }
         public bool isGridComplete { get; set; }
         public int transferStatus { get; set; }
         public int state { get; set; }
         public int characterIndex { get; set; }
-        public object bucketHash { get; set; }
+        public long bucketHash { get; set; }
         public PrimaryStat primaryStat { get; set; }
     }
 
     public class Currency
     {
-        public object itemHash { get; set; }
+        public long itemHash { get; set; }
         public int value { get; set; }
     }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using BungieWebClient;
@@ -34,23 +35,52 @@ namespace CollectionManagerSite.Controllers
                 if (characterIds == null)
                     return RedirectToAction("Index", "Authentication");
 
-                var evaItems = GetVendorMetadata(134701236);
-                var petraItems = GetVendorMetadata(1410745145);
+                //List<MissingItemModel> shaders;
+                //List<MissingItemModel> emblems;
+                //List<MissingItemModel> ships;
+                //List<MissingItemModel> sparrows;
+                //List<Task> currentTasks = new List<Task>();
+                //currentTasks.Add(Task.Factory.StartNew(() => { shaders = GetVendorItems(characterIds, "Shader", 2420628997); }));
+                //currentTasks.Add(Task.Factory.StartNew(() => { emblems = GetVendorItems(characterIds, "Emblem", 3301500998); }));
+                //currentTasks.Add(Task.Factory.StartNew(() => { ships = GetVendorItems(characterIds, "Ship", 2244880194); }));
+                //currentTasks.Add(Task.Factory.StartNew(() => { sparrows = GetVendorItems(characterIds, "Sparrow", 44395194); }));
+
+                //Task.WaitAll(currentTasks.ToArray());
 
                 var shaders = GetVendorItems(characterIds, "Shader", 2420628997);
                 var emblems = GetVendorItems(characterIds, "Emblem", 3301500998);
+                var ships = GetVendorItems(characterIds, "Ship", 2244880194);
+                var sparrows = GetVendorItems(characterIds, "Sparrow", 44395194);
 
-                // Do we have any currently being sold?!
-                var currentlyListed = GetCurrentlyForSale(evaItems, shaders, "Shaders", "Eva Shaders");
-                currentlyListed.AddRange(GetCurrentlyForSale(evaItems, emblems, "Emblems", "Eva Emblems"));
-                currentlyListed.AddRange(GetCurrentlyForSale(petraItems, emblems, "Queen's Wrath: Rank 1", "Petra Emblems"));
-                currentlyListed.AddRange(GetCurrentlyForSale(petraItems, shaders, "Queen's Wrath: Rank 2", "Petra Shaders"));
-                currentlyListed.AddRange(GetCurrentlyForSale(petraItems, shaders, "Queen's Wrath: Rank 3", "Petra Shaders"));
+                var results = new Dictionary<string, Dictionary<string, List<MissingItemModel>>>();
+                results.Add("Shaders", new Dictionary<string, List<MissingItemModel>>() { { "Needed", shaders } });
+                results.Add("Emblems", new Dictionary<string, List<MissingItemModel>>() { { "Needed", emblems } });
+                results.Add("Ships", new Dictionary<string, List<MissingItemModel>>() { { "Needed", ships } });
+                results.Add("Sparrows", new Dictionary<string, List<MissingItemModel>>() { { "Needed", sparrows } });
+
+                var evaItems = GetVendorMetadata(134701236);
+                var amandaItems = GetVendorMetadata(459708109);
+                //var petraItems = GetVendorMetadata(1410745145);
+
+                results["Shaders"].Add("ForSale", GetCurrentlyForSale(evaItems, shaders, "Shaders", "Shaders"));
+                results["Emblems"].Add("ForSale", GetCurrentlyForSale(evaItems, emblems, "Emblems", "Emblems"));
+                results["Ships"].Add("ForSale", GetCurrentlyForSale(amandaItems, ships, "Ship Blueprints", "Ships"));
+                results["Sparrows"].Add("ForSale", GetCurrentlyForSale(amandaItems, sparrows, "Vehicles", "Sparrows"));
+
+                // Do we have any currently being sold?!   
+                //var currentlyListed = new Dictionary<string, List<MissingItemModel>>
+                //{
+                //    { "Shaders", GetCurrentlyForSale(evaItems, shaders, "Shaders", "Eva Shaders")},
+                //    { "Emblems", GetCurrentlyForSale(evaItems, emblems, "Emblems", "Eva Emblems")}
+                //};
+                //currentlyListed.AddRange(GetCurrentlyForSale(petraItems, emblems, "Queen's Wrath: Rank 1", "Petra Emblems"));
+                //currentlyListed.AddRange(GetCurrentlyForSale(petraItems, shaders, "Queen's Wrath: Rank 2", "Petra Shaders"));
+                //currentlyListed.AddRange(GetCurrentlyForSale(petraItems, shaders, "Queen's Wrath: Rank 3", "Petra Shaders"));
 
                 if (shaders == null || emblems == null)
                     return RedirectToAction("Index", "Authentication");
 
-                return View(currentlyListed.Union(emblems).Union(shaders).ToList());
+                return View(results);
             }
 
             return RedirectToAction("Index", "Authentication");
@@ -68,11 +98,12 @@ namespace CollectionManagerSite.Controllers
             return items.Select(i => new MissingItemModel()
             {
                 Type = $"{type} currently for sale!",
-                Section = i.Section,
+                Faction = i.Faction,
                 Name = i.Name,
                 Icon = i.Icon,
+                SecondaryIcon = i.SecondaryIcon ?? "",
                 UnlockHashes = i.UnlockHashes,
-                Hash = i.Hash
+                Hash = i.Hash,          
             }).ToList();
         }
 
@@ -141,15 +172,13 @@ namespace CollectionManagerSite.Controllers
                         var result = new MissingItemModel()
                         {
                             Type = type,
-                            Section = group.Key,
+                            Faction = group.Key,
                             Hash = inventoryItem.Response.data.inventoryItem.itemHash,
                             Name = inventoryItem.Response.data.inventoryItem.itemName,
                             Icon = inventoryItem.Response.data.inventoryItem.icon,
+                            SecondaryIcon = inventoryItem.Response.data.inventoryItem.secondaryIcon ?? "",
                             UnlockHashes = item.unlockStatuses.Select(i => i.unlockFlagHash)
                         };
-
-                        //var unlockHash = item.unlockStatuses.First().unlockFlagHash;
-                        //inventoryItem = webClient.RunGetAsync<InventoryItemPlatformResponse>($"/Platform/Destiny/Manifest/UnlockFlag/{unlockHash}/");
 
                         results.Add(result);
                     }

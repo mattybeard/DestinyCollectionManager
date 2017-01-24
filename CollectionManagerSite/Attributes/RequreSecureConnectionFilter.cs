@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace CollectionManagerSite.Attributes
 {
-    public class RequreSecureConnectionFilter : RequireHttpsAttribute
+    public class RequireSecureConnectionFilter : RequireHttpsAttribute
     {
         public override void OnAuthorization(AuthorizationContext filterContext)
         {

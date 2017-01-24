@@ -35,3 +35,8 @@ C:\Users\MattB\Source\Repos\DestinyCollectionManager\CollectionManagerSite\bin\B
 C:\Users\MattB\Source\Repos\DestinyCollectionManager\CollectionManagerSite\bin\Newtonsoft.Json.dll
 C:\Users\MattB\Source\Repos\DestinyCollectionManager\CollectionManagerSite\bin\BungieWebClient.pdb
 C:\Users\MattB\Source\Repos\DestinyCollectionManager\CollectionManagerSite\bin\Newtonsoft.Json.xml
+C:\Users\MattB\Source\Repos\DestinyCollectionManager\CollectionManagerSite\bin\Antlr3.Runtime.dll
+C:\Users\MattB\Source\Repos\DestinyCollectionManager\CollectionManagerSite\bin\System.Web.Optimization.dll
+C:\Users\MattB\Source\Repos\DestinyCollectionManager\CollectionManagerSite\bin\WebGrease.dll
+C:\Users\MattB\Source\Repos\DestinyCollectionManager\CollectionManagerSite\bin\Antlr3.Runtime.pdb
+C:\Users\MattB\Source\Repos\DestinyCollectionManager\CollectionManagerSite\bin\System.Web.Optimization.xml
