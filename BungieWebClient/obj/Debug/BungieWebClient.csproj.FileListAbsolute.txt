@@ -4,3 +4,4 @@ C:\Users\MattB\Source\Repos\DestinyCollectionManager\BungieWebClient\bin\Debug\N
 C:\Users\MattB\Source\Repos\DestinyCollectionManager\BungieWebClient\bin\Debug\Newtonsoft.Json.xml
 C:\Users\MattB\Source\Repos\DestinyCollectionManager\BungieWebClient\obj\Debug\BungieWebClient.dll
 C:\Users\MattB\Source\Repos\DestinyCollectionManager\BungieWebClient\obj\Debug\BungieWebClient.pdb
+C:\Users\MattB\Source\Repos\DestinyCollectionManager\BungieWebClient\obj\Debug\BungieWebClient.csprojResolveAssemblyReference.cache

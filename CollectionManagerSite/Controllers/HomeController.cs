@@ -22,39 +22,28 @@ namespace CollectionManagerSite.Controllers
     {
         private BungieClient webClient { get; set; }
 
-        public ActionResult Index()
+        public ActionResult Index(int console = 0)
         {
             var authorised = System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"] != null && System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"] != null;
 
             if (authorised)
             {                
                 webClient = new BungieClient(System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"].Value, System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"].Value);
-                webClient.Status = "Created";
                 webClient.RefreshAccessToken();
-                webClient.Status = "Refreshed";
-                webClient.CharacterIds = RetriveCharacterDetails() ?? new string[0];
-                webClient.Status = $"Got{webClient.CharacterIds.Count()}Characters";
+                webClient.GetUserDetails();
 
-                if (webClient.CharacterIds == null)
-                {
-                    var statusCookie = new HttpCookie("GOStatus")
-                    {
-                        Value = webClient.Status,
-                        Expires = DateTime.Now.AddDays(1)
-                    };
-                    Response.Cookies.Add(statusCookie);
-
+                if (webClient.MembershipType == -1)
                     return RedirectToAction("Index", "Authentication");
-                }
 
-                var shaders = GetVendorItems(webClient.CharacterIds, "Shader", 2420628997);
-                webClient.Status = "GotShaderVendors";
-                var emblems = GetVendorItems(webClient.CharacterIds, "Emblem", 3301500998);
-                webClient.Status = "GotEmblemVendors";
-                var ships = GetVendorItems(webClient.CharacterIds, "Ship", 2244880194);
-                webClient.Status = "GotShipVendors";
-                var sparrows = GetVendorItems(webClient.CharacterIds, "Sparrow", 44395194);
-                webClient.Status = "GotSparrowVendors";
+                var consoleChoice = console == 0 ? webClient.MembershipType : console;
+                var characterIds = consoleChoice == 1 ? webClient.XboxCharacterIds : webClient.PsCharacterIds;
+                ViewBag.Console = consoleChoice;
+                ViewBag.DualConsole = webClient.DualAccount;
+                
+                var shaders = GetVendorItems(characterIds, "Shader", 2420628997, consoleChoice);
+                var emblems = GetVendorItems(characterIds, "Emblem", 3301500998, consoleChoice);
+                var ships = GetVendorItems(characterIds, "Ship", 2244880194, consoleChoice);
+                var sparrows = GetVendorItems(characterIds, "Sparrow", 44395194, consoleChoice);
 
                 var results = new Dictionary<string, Dictionary<string, List<MissingItemModel>>>();
                 results.Add("Shaders", new Dictionary<string, List<MissingItemModel>>() { { "Needed", shaders } });
@@ -64,7 +53,6 @@ namespace CollectionManagerSite.Controllers
 
                 var evaItems = GetVendorMetadata(134701236);
                 var amandaItems = GetVendorMetadata(459708109);
-                webClient.Status = "GotForSaleItems";
                 //var petraItems = GetVendorMetadata(1410745145);
 
                 results["Shaders"].Add("ForSale", GetCurrentlyForSale(evaItems, shaders, "Shaders", "Shaders"));
@@ -114,26 +102,26 @@ namespace CollectionManagerSite.Controllers
             return vendorDetails;
         }
 
-        private string[] RetriveCharacterDetails()
-        {
-            if(webClient.MembershipType == 0 && webClient.AccountName == null)
-                SendErrorAlert(new Exception($"Error retrieving details - no account or authcode. {webClient.AccountName}{webClient.AuthCode}"));
+        //private string[] RetriveCharacterDetails()
+        //{
+        //    if(webClient.MembershipType == 0 && webClient.AccountName == null)
+        //        SendErrorAlert(new Exception($"Error retrieving details - no account or authcode. {webClient.AccountName}{webClient.AuthCode}"));
 
-            var membershipDetails = webClient.RunGetAsync<MembershipResponse>($"Platform/Destiny/SearchDestinyPlayer/{webClient.MembershipType}/{webClient.AccountName}/");
-            var _membershipId = membershipDetails?.Response?.FirstOrDefault();
-            if (_membershipId == null)
-            {
-                // this should be use the refresh token but for now lets re-authenticate
-                return null;
-            }
+        //    var membershipDetails = webClient.RunGetAsync<MembershipResponse>($"Platform/Destiny/SearchDestinyPlayer/{webClient.MembershipType}/{webClient.AccountName}/");
+        //    var _membershipId = membershipDetails?.Response?.FirstOrDefault();
+        //    if (_membershipId == null)
+        //    {
+        //        // this should be use the refresh token but for now lets re-authenticate
+        //        return null;
+        //    }
             
-            webClient.MembershipType = _membershipId.membershipType;
+        //    webClient.MembershipType = _membershipId.membershipType;
 
-            var characterDetails = webClient.RunGetAsync<CharacterEndpoint>($"Platform/Destiny/{webClient.MembershipType}/Account/{_membershipId.membershipId}/Summary/");
-            var _characterIds = characterDetails.Response.data.characters.Select(c => c.characterBase.characterId).ToArray();
+        //    var characterDetails = webClient.RunGetAsync<CharacterEndpoint>($"Platform/Destiny/{webClient.MembershipType}/Account/{_membershipId.membershipId}/Summary/");
+        //    var _characterIds = characterDetails.Response.data.characters.Select(c => c.characterBase.characterId).ToArray();
 
-            return _characterIds;
-        }
+        //    return _characterIds;
+        //}
 
         private void SendErrorAlert(Exception exception)
         {
@@ -164,12 +152,12 @@ namespace CollectionManagerSite.Controllers
             }
         }
 
-        private List<MissingItemModel> GetVendorItems(string[] characterIds, string type, long vendorId)
+        private List<MissingItemModel> GetVendorItems(string[] characterIds, string type, long vendorId, int membershipType)
         {
             var itemsNeeded = new Dictionary<string, List<SaleItem>>();
             foreach (var character in characterIds)
             {
-                var itemsCollection = webClient.RunGetAsync<VendorPlatformResponse>($"Platform/Destiny/{webClient.MembershipType}/MyAccount/Character/{character}/Vendor/{vendorId}/");
+                var itemsCollection = webClient.RunGetAsync<VendorPlatformResponse>($"Platform/Destiny/{membershipType}/MyAccount/Character/{character}/Vendor/{vendorId}/");
                 if(itemsCollection.ErrorCode > 1)
                     throw new InvalidOperationException($"Problem getting your {type}s.");
 

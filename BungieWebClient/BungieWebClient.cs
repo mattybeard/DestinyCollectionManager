@@ -10,7 +10,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using BungieWebClient.Model.Authentication;
+using BungieWebClient.Model.Character;
 using BungieWebClient.Model.Gamertag;
+using BungieWebClient.Model.Membership;
 
 namespace BungieWebClient
 {
@@ -27,8 +29,14 @@ namespace BungieWebClient
         private string _authCode;
         private string _accessToken;
         private string _refreshToken;
-        public string AccountName;
+        public string XboxAccountName;
+        public string[] XboxCharacterIds;
+
+        public string PsAccountName;
+        public string[] PsCharacterIds;
+        
         public int MembershipType;
+        public bool DualAccount { get; set; }
 
         public BungieClient(string accessToken, string refreshToken) : this()
         {
@@ -51,8 +59,6 @@ namespace BungieWebClient
         }
 
         public HttpClient Client { get; set; }
-        public string[] CharacterIds { get; set; }
-        public string Status { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -185,12 +191,8 @@ namespace BungieWebClient
                 _accessToken = response.Response.AccessToken.Value;
                 _refreshToken = response.Response.RefreshToken.Value;
             }
-            else
-            {
-                //SendErrorAlert(new Exception($"Refreshing Access Token: {response.ErrorStatus} Message: {response.Message}"));
-            }
 
-            GetUserDetails();
+            //GetUserDetails();
 
             return response;
         }
@@ -200,22 +202,41 @@ namespace BungieWebClient
             var response = RunGetAsync<GamertagResponse>("Platform/User/GetBungieNetUser/");
             if (response?.ErrorCode == Success)
             {
-                if (!string.IsNullOrEmpty(response.Response?.GamerTag) && !string.IsNullOrEmpty(response.Response?.PsnId))
-                {
-                    AccountName = response.Response?.PsnId;
-                    MembershipType = 2;
-                }
+                XboxAccountName = response.Response?.GamerTag ?? "";
+                PsAccountName = response.Response?.PsnId;
 
-                else if (!string.IsNullOrEmpty(response.Response?.GamerTag))
-                {
-                    AccountName = response.Response?.GamerTag;
+                if (!string.IsNullOrEmpty(XboxAccountName))
+                    XboxCharacterIds = RetrieveCharacterDetails(1, XboxAccountName);
+
+                if (!string.IsNullOrEmpty(XboxAccountName))
+                    PsCharacterIds = RetrieveCharacterDetails(2, PsAccountName);
+
+                if (XboxCharacterIds != null && XboxCharacterIds.Any())
                     MembershipType = 1;
-                }
-                else
-                {
-                    AccountName = response.Response?.PsnId;
+                else if (PsCharacterIds != null && PsCharacterIds.Any())
                     MembershipType = 2;
-                }
+                else
+                    MembershipType = -1;
+
+                if ((XboxCharacterIds != null && XboxCharacterIds.Any()) && (PsCharacterIds != null && PsCharacterIds.Any()))
+                    DualAccount = true;
+
+
+                //{
+                //    AccountName = response.Response?.PsnId;
+                //    MembershipType = 2;
+                //}
+
+                //else if (!string.IsNullOrEmpty(response.Response?.GamerTag))
+                //{
+                //    AccountName = response.Response?.GamerTag;
+                //    MembershipType = 1;
+                //}
+                //else
+                //{
+                //    AccountName = response.Response?.PsnId;
+                //    MembershipType = 2;
+                //}
                 //AccountName = response.Response?.GamerTag ?? response.Response?.PsnId ?? "";
                 //MembershipType = response.Response?.GamerTag != null ? 1 : 2;
             }
@@ -223,6 +244,24 @@ namespace BungieWebClient
             {
                 SendErrorAlert(new Exception($"GetUserDetailsFailed - Error Code:{response?.ErrorCode}      Message:{response?.Message}     Access Token:{_accessToken}     Refresh Token:{_refreshToken}"));
             }
+        }
+        
+        private string[] RetrieveCharacterDetails(int membershipType, string membershipName)
+        {
+            var membershipDetails = RunGetAsync<MembershipResponse>($"Platform/Destiny/SearchDestinyPlayer/{membershipType}/{membershipName}/");
+            var membershipId = membershipDetails?.Response?.FirstOrDefault();
+            if (membershipId == null)
+            {
+                // this should be use the refresh token but for now lets re-authenticate
+                return null;
+            }
+
+            MembershipType = membershipId.membershipType;
+
+            var characterDetails = RunGetAsync<CharacterEndpoint>($"Platform/Destiny/{MembershipType}/Account/{membershipId.membershipId}/Summary/");
+            var _characterIds = characterDetails.Response.data.characters.Select(c => c.characterBase.characterId).ToArray();
+
+            return _characterIds;
         }
     }
 }
