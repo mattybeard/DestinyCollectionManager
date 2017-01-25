@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Mail;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -50,6 +51,8 @@ namespace BungieWebClient
         }
 
         public HttpClient Client { get; set; }
+        public string[] CharacterIds { get; set; }
+        public string Status { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -98,7 +101,7 @@ namespace BungieWebClient
             try
             {
                 HttpResponseMessage response = null;
-                if (!string.IsNullOrEmpty(_accessToken))
+                if (!string.IsNullOrEmpty(_accessToken) && endpoint != "Platform/App/GetAccessTokensFromRefreshToken/")
                 {
                     Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
                 }
@@ -127,9 +130,39 @@ namespace BungieWebClient
             }
             catch (Exception ex)
             {
+                SendErrorAlert(ex);
                 //log
             }
             return default(T);
+        }
+
+        private void SendErrorAlert(Exception exception)
+        {
+            MailMessage msg = new MailMessage();
+
+            msg.From = new MailAddress("mattybeard@gmail.com");
+            msg.To.Add("mattybeard@gmail.com");
+            msg.Subject = "GO Exception";
+            msg.Body = exception.ToString();
+            SmtpClient client = new SmtpClient();
+            client.UseDefaultCredentials = true;
+            client.Host = "smtp.gmail.com";
+            client.Port = 587;
+            client.EnableSsl = true;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.Credentials = new NetworkCredential("mattybeard@gmail.com", "Baxter2242");
+            client.Timeout = 20000;
+            try
+            {
+                client.Send(msg);
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                msg.Dispose();
+            }
         }
 
         public AuthenticationResponse ObtainAccessToken()
@@ -146,11 +179,15 @@ namespace BungieWebClient
 
         public ResponseBase RefreshAccessToken()
         {
-            var response = RunPostAsync<AuthenticationResponse>(new RefreshTokenRequest { RefreshToken = _refreshToken }, RefreshTokenRequest);
+            var response = RunPostAsync<AuthenticationResponse>(new RefreshTokenRequest { refreshToken = _refreshToken }, RefreshTokenRequest);
             if (response?.ErrorCode == Success)
             {
                 _accessToken = response.Response.AccessToken.Value;
-                _refreshToken = response.Response.RefreshToken.Value;                
+                _refreshToken = response.Response.RefreshToken.Value;
+            }
+            else
+            {
+                //SendErrorAlert(new Exception($"Refreshing Access Token: {response.ErrorStatus} Message: {response.Message}"));
             }
 
             GetUserDetails();
@@ -163,9 +200,28 @@ namespace BungieWebClient
             var response = RunGetAsync<GamertagResponse>("Platform/User/GetBungieNetUser/");
             if (response?.ErrorCode == Success)
             {
-                AccountName = response.Response?.GamerTag ?? response.Response?.PsnId ?? "";
-                MembershipType = response.Response?.GamerTag != null ? 1 : 2;
+                if (!string.IsNullOrEmpty(response.Response?.GamerTag) && !string.IsNullOrEmpty(response.Response?.PsnId))
+                {
+                    AccountName = response.Response?.PsnId;
+                    MembershipType = 2;
+                }
 
+                else if (!string.IsNullOrEmpty(response.Response?.GamerTag))
+                {
+                    AccountName = response.Response?.GamerTag;
+                    MembershipType = 1;
+                }
+                else
+                {
+                    AccountName = response.Response?.PsnId;
+                    MembershipType = 2;
+                }
+                //AccountName = response.Response?.GamerTag ?? response.Response?.PsnId ?? "";
+                //MembershipType = response.Response?.GamerTag != null ? 1 : 2;
+            }
+            else
+            {
+                SendErrorAlert(new Exception($"GetUserDetailsFailed - Error Code:{response?.ErrorCode}      Message:{response?.Message}     Access Token:{_accessToken}     Refresh Token:{_refreshToken}"));
             }
         }
     }

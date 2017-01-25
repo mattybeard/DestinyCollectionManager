@@ -1,4 +1,6 @@
-﻿
+﻿@using BungieWebClient
+@using BungieWebClient.Model.Authentication
+
 @{
     ViewBag.Title = "Guardian Outfitter";
 }
@@ -13,4 +15,11 @@
         <p><a href="https://www.bungie.net/en/Application/Authorize/11093" id="navigation" role="navigation" aria-label="Primary navigation" class="button">Start Authentication</a></p>
         <p>@*<a href="https://www.bungie.net/en/Application/Authorize/6871" id="navigation" role="navigation" aria-label="Primary navigation" class="button">Start Authentication</a>*@</p>
     </div>
+
+    @if (ViewBag.Debug)
+    {
+        <p>AccessToken:</p> @ViewBag.AccessToken
+        <p>RefreshToken:</p> @ViewBag.RefreshToken
+        <p>Status:</p> @ViewBag.Status      
+    }
 </div>

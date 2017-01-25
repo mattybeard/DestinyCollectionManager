@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -26,31 +28,33 @@ namespace CollectionManagerSite.Controllers
 
             if (authorised)
             {                
-                if (webClient == null)
-                    webClient = new BungieClient(System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"].Value, System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"].Value);
-
+                webClient = new BungieClient(System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"].Value, System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"].Value);
+                webClient.Status = "Created";
                 webClient.RefreshAccessToken();
+                webClient.Status = "Refreshed";
+                webClient.CharacterIds = RetriveCharacterDetails() ?? new string[0];
+                webClient.Status = $"Got{webClient.CharacterIds.Count()}Characters";
 
-                var characterIds = RetriveCharacterDetails();
-                if (characterIds == null)
+                if (webClient.CharacterIds == null)
+                {
+                    var statusCookie = new HttpCookie("GOStatus")
+                    {
+                        Value = webClient.Status,
+                        Expires = DateTime.Now.AddDays(1)
+                    };
+                    Response.Cookies.Add(statusCookie);
+
                     return RedirectToAction("Index", "Authentication");
+                }
 
-                //List<MissingItemModel> shaders;
-                //List<MissingItemModel> emblems;
-                //List<MissingItemModel> ships;
-                //List<MissingItemModel> sparrows;
-                //List<Task> currentTasks = new List<Task>();
-                //currentTasks.Add(Task.Factory.StartNew(() => { shaders = GetVendorItems(characterIds, "Shader", 2420628997); }));
-                //currentTasks.Add(Task.Factory.StartNew(() => { emblems = GetVendorItems(characterIds, "Emblem", 3301500998); }));
-                //currentTasks.Add(Task.Factory.StartNew(() => { ships = GetVendorItems(characterIds, "Ship", 2244880194); }));
-                //currentTasks.Add(Task.Factory.StartNew(() => { sparrows = GetVendorItems(characterIds, "Sparrow", 44395194); }));
-
-                //Task.WaitAll(currentTasks.ToArray());
-
-                var shaders = GetVendorItems(characterIds, "Shader", 2420628997);
-                var emblems = GetVendorItems(characterIds, "Emblem", 3301500998);
-                var ships = GetVendorItems(characterIds, "Ship", 2244880194);
-                var sparrows = GetVendorItems(characterIds, "Sparrow", 44395194);
+                var shaders = GetVendorItems(webClient.CharacterIds, "Shader", 2420628997);
+                webClient.Status = "GotShaderVendors";
+                var emblems = GetVendorItems(webClient.CharacterIds, "Emblem", 3301500998);
+                webClient.Status = "GotEmblemVendors";
+                var ships = GetVendorItems(webClient.CharacterIds, "Ship", 2244880194);
+                webClient.Status = "GotShipVendors";
+                var sparrows = GetVendorItems(webClient.CharacterIds, "Sparrow", 44395194);
+                webClient.Status = "GotSparrowVendors";
 
                 var results = new Dictionary<string, Dictionary<string, List<MissingItemModel>>>();
                 results.Add("Shaders", new Dictionary<string, List<MissingItemModel>>() { { "Needed", shaders } });
@@ -60,6 +64,7 @@ namespace CollectionManagerSite.Controllers
 
                 var evaItems = GetVendorMetadata(134701236);
                 var amandaItems = GetVendorMetadata(459708109);
+                webClient.Status = "GotForSaleItems";
                 //var petraItems = GetVendorMetadata(1410745145);
 
                 results["Shaders"].Add("ForSale", GetCurrentlyForSale(evaItems, shaders, "Shaders", "Shaders"));
@@ -68,17 +73,12 @@ namespace CollectionManagerSite.Controllers
                 results["Sparrows"].Add("ForSale", GetCurrentlyForSale(amandaItems, sparrows, "Vehicles", "Sparrows"));
 
                 // Do we have any currently being sold?!   
-                //var currentlyListed = new Dictionary<string, List<MissingItemModel>>
-                //{
-                //    { "Shaders", GetCurrentlyForSale(evaItems, shaders, "Shaders", "Eva Shaders")},
-                //    { "Emblems", GetCurrentlyForSale(evaItems, emblems, "Emblems", "Eva Emblems")}
-                //};
                 //currentlyListed.AddRange(GetCurrentlyForSale(petraItems, emblems, "Queen's Wrath: Rank 1", "Petra Emblems"));
                 //currentlyListed.AddRange(GetCurrentlyForSale(petraItems, shaders, "Queen's Wrath: Rank 2", "Petra Shaders"));
                 //currentlyListed.AddRange(GetCurrentlyForSale(petraItems, shaders, "Queen's Wrath: Rank 3", "Petra Shaders"));
 
-                if (shaders == null || emblems == null)
-                    return RedirectToAction("Index", "Authentication");
+                //if (shaders == null || emblems == null)
+                    //return RedirectToAction("Index", "Authentication");
 
                 return View(results);
             }
@@ -116,6 +116,9 @@ namespace CollectionManagerSite.Controllers
 
         private string[] RetriveCharacterDetails()
         {
+            if(webClient.MembershipType == 0 && webClient.AccountName == null)
+                SendErrorAlert(new Exception($"Error retrieving details - no account or authcode. {webClient.AccountName}{webClient.AuthCode}"));
+
             var membershipDetails = webClient.RunGetAsync<MembershipResponse>($"Platform/Destiny/SearchDestinyPlayer/{webClient.MembershipType}/{webClient.AccountName}/");
             var _membershipId = membershipDetails?.Response?.FirstOrDefault();
             if (_membershipId == null)
@@ -131,7 +134,36 @@ namespace CollectionManagerSite.Controllers
 
             return _characterIds;
         }
-       
+
+        private void SendErrorAlert(Exception exception)
+        {
+            MailMessage msg = new MailMessage();
+
+            msg.From = new MailAddress("mattybeard@gmail.com");
+            msg.To.Add("mattybeard@gmail.com");
+            msg.Subject = "GO Exception";
+            msg.Body = exception.ToString();
+            SmtpClient client = new SmtpClient();
+            client.UseDefaultCredentials = true;
+            client.Host = "smtp.gmail.com";
+            client.Port = 587;
+            client.EnableSsl = true;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.Credentials = new NetworkCredential("mattybeard@gmail.com", "Baxter2242");
+            client.Timeout = 20000;
+            try
+            {
+                client.Send(msg);
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                msg.Dispose();
+            }
+        }
+
         private List<MissingItemModel> GetVendorItems(string[] characterIds, string type, long vendorId)
         {
             var itemsNeeded = new Dictionary<string, List<SaleItem>>();

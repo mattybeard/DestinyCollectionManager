@@ -39,7 +39,7 @@ namespace BungieWebClient.Model.Authentication
 
     public class RefreshTokenRequest
     {
-        public string RefreshToken { get; set; }
+        public string refreshToken { get; set; }
     }
 
     public class ResponseBase

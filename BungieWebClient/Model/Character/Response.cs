@@ -14,7 +14,7 @@ namespace BungieWebClient.Model.Character
         public int ThrottleSeconds { get; set; }
         public string ErrorStatus { get; set; }
         public string Message { get; set; }
-        public MessageData MessageData { get; set; }
+        //public MessageData MessageData { get; set; }
     }
 
     public class CharacterResponse : Response
@@ -114,21 +114,21 @@ namespace BungieWebClient.Model.Character
         public string membershipId { get; set; }
         public int membershipType { get; set; }
         public string characterId { get; set; }
-        public string dateLastPlayed { get; set; }
-        public string minutesPlayedThisSession { get; set; }
-        public string minutesPlayedTotal { get; set; }
-        public int powerLevel { get; set; }
-        public long raceHash { get; set; }
-        public long genderHash { get; set; }
-        public long classHash { get; set; }
-        public long currentActivityHash { get; set; }
-        public long lastCompletedStoryHash { get; set; }
-        public Stats stats { get; set; }
-        public int grimoireScore { get; set; }
-        public PeerView peerView { get; set; }
-        public int genderType { get; set; }
-        public int classType { get; set; }
-        public long buildStatGroupHash { get; set; }
+        //public string dateLastPlayed { get; set; }
+        //public string minutesPlayedThisSession { get; set; }
+        //public string minutesPlayedTotal { get; set; }
+        //public int powerLevel { get; set; }
+        //public long raceHash { get; set; }
+        //public long genderHash { get; set; }
+        //public long classHash { get; set; }
+        //public long currentActivityHash { get; set; }
+        //public long lastCompletedStoryHash { get; set; }
+        //public Stats stats { get; set; }
+        //public int grimoireScore { get; set; }
+        //public PeerView peerView { get; set; }
+        //public int genderType { get; set; }
+        //public int classType { get; set; }
+        //public long buildStatGroupHash { get; set; }
     }
 
     public class LevelProgression
@@ -146,14 +146,14 @@ namespace BungieWebClient.Model.Character
     public class Character
     {
         public CharacterBase characterBase { get; set; }
-        public LevelProgression levelProgression { get; set; }
-        public string emblemPath { get; set; }
-        public string backgroundPath { get; set; }
-        public long emblemHash { get; set; }
-        public int characterLevel { get; set; }
-        public int baseCharacterLevel { get; set; }
-        public bool isPrestigeLevel { get; set; }
-        public double percentToNextLevel { get; set; }
+        //public LevelProgression levelProgression { get; set; }
+        //public string emblemPath { get; set; }
+        //public string backgroundPath { get; set; }
+        //public long emblemHash { get; set; }
+        //public int characterLevel { get; set; }
+        //public int baseCharacterLevel { get; set; }
+        //public bool isPrestigeLevel { get; set; }
+        //public double percentToNextLevel { get; set; }
     }
 
     public class PrimaryStat
@@ -166,16 +166,16 @@ namespace BungieWebClient.Model.Character
     public class Item
     {
         public long itemHash { get; set; }
-        public string itemId { get; set; }
-        public int quantity { get; set; }
-        public int damageType { get; set; }
-        public long damageTypeHash { get; set; }
-        public bool isGridComplete { get; set; }
-        public int transferStatus { get; set; }
-        public int state { get; set; }
-        public int characterIndex { get; set; }
-        public long bucketHash { get; set; }
-        public PrimaryStat primaryStat { get; set; }
+        //public string itemId { get; set; }
+        //public int quantity { get; set; }
+        //public int damageType { get; set; }
+        //public long damageTypeHash { get; set; }
+        //public bool isGridComplete { get; set; }
+        //public int transferStatus { get; set; }
+        //public int state { get; set; }
+        //public int characterIndex { get; set; }
+        //public long bucketHash { get; set; }
+        //public PrimaryStat primaryStat { get; set; }
     }
 
     public class Currency
@@ -195,8 +195,8 @@ namespace BungieWebClient.Model.Character
         public string membershipId { get; set; }
         public int membershipType { get; set; }
         public List<Character> characters { get; set; }
-        public Inventory inventory { get; set; }
-        public int grimoireScore { get; set; }
-        public int versions { get; set; }
+        //public Inventory inventory { get; set; }
+        //public int grimoireScore { get; set; }
+        //public int versions { get; set; }
     }
 }

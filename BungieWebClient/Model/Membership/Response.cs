@@ -25,7 +25,7 @@ namespace BungieWebClient.Model.Membership
         public int ThrottleSeconds { get; set; }
         public string ErrorStatus { get; set; }
         public string Message { get; set; }
-        public MessageData MessageData { get; set; }
+        //public MessageData MessageData { get; set; }
     }
 }
 

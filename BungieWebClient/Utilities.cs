@@ -17,8 +17,9 @@ namespace BungieWebClient
             {
                 return JsonConvert.SerializeObject(input);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                SendErrorAlert(ex);
                 return "";
             }
         }
