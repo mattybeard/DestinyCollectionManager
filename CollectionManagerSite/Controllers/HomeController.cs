@@ -20,6 +20,29 @@ namespace CollectionManagerSite.Controllers
 {
     public class HomeController : Controller
     {
+        private static AdvisorsEndpoint EvaCache { get; set; }
+        private static AdvisorsEndpoint AmandaCache { get; set; }
+        private static AdvisorsEndpoint PetraCache { get; set; }
+        private static AdvisorsEndpoint VanguardQuartermasterCache { get; set; }
+        private static AdvisorsEndpoint CrucibleQuartermasterCache { get; set; }
+        private static DateTime cacheExpiry { get; set; }
+        private bool CacheExpired
+        {
+            get
+            {
+                if (cacheExpiry == null || EvaCache == null || AmandaCache == null || PetraCache == null || VanguardQuartermasterCache == null || CrucibleQuartermasterCache == null)
+                    return true;
+
+                if (cacheExpiry < DateTime.Now)
+                    return true;
+
+                if (DateTime.Now.Hour == 10 && DateTime.Now.Minute < 30)
+                    return true;
+
+                return false;
+            }
+        }
+
         private BungieClient webClient { get; set; }
 
         public ActionResult Index(int console = 0)
@@ -51,14 +74,30 @@ namespace CollectionManagerSite.Controllers
                 results.Add("Ships", new Dictionary<string, List<MissingItemModel>>() { { "Needed", ships } });
                 results.Add("Sparrows", new Dictionary<string, List<MissingItemModel>>() { { "Needed", sparrows } });
 
-                var evaItems = GetVendorMetadata(134701236);
-                var amandaItems = GetVendorMetadata(459708109);
-                //var petraItems = GetVendorMetadata(1410745145);
+                if (CacheExpired)
+                {
+                    EvaCache = GetVendorMetadata(134701236);
+                    AmandaCache = GetVendorMetadata(459708109);
+                    PetraCache = GetVendorMetadata(1410745145);
+                    VanguardQuartermasterCache = GetVendorMetadata(2668878854);
+                    CrucibleQuartermasterCache = GetVendorMetadata(3658200622);
 
-                results["Shaders"].Add("ForSale", GetCurrentlyForSale(evaItems, shaders, "Shaders", "Shaders"));
-                results["Emblems"].Add("ForSale", GetCurrentlyForSale(evaItems, emblems, "Emblems", "Emblems"));
-                results["Ships"].Add("ForSale", GetCurrentlyForSale(amandaItems, ships, "Ship Blueprints", "Ships"));
-                results["Sparrows"].Add("ForSale", GetCurrentlyForSale(amandaItems, sparrows, "Vehicles", "Sparrows"));
+                    cacheExpiry = DateTime.Now.AddMinutes(30);
+                }
+
+
+                results["Shaders"].Add("ForSale", GetCurrentlyForSale(EvaCache, shaders, "Shaders", "Shaders"));
+                results["Shaders"]["ForSale"].AddRange(GetCurrentlyForSale(PetraCache, shaders, "Queen's Wrath: Rank 2", "Shaders"));
+                results["Shaders"]["ForSale"].AddRange(GetCurrentlyForSale(PetraCache, shaders, "Queen's Wrath: Rank 3", "Shaders"));
+
+                results["Emblems"].Add("ForSale", GetCurrentlyForSale(EvaCache, emblems, "Emblems", "Emblems"));
+                results["Emblems"]["ForSale"].AddRange(GetCurrentlyForSale(PetraCache, emblems, "Queen's Wrath: Rank 1", "Emblems"));
+
+                results["Ships"].Add("ForSale", GetCurrentlyForSale(AmandaCache, ships, "Ship Blueprints", "Ships"));
+
+                results["Sparrows"].Add("ForSale", GetCurrentlyForSale(AmandaCache, sparrows, "Vehicles", "Sparrows"));
+                results["Sparrows"]["ForSale"].AddRange(GetCurrentlyForSale(VanguardQuartermasterCache, sparrows, "Vehicles", "Sparrows"));
+                results["Sparrows"]["ForSale"].AddRange(GetCurrentlyForSale(CrucibleQuartermasterCache, sparrows, "Vehicles", "Sparrows"));
 
                 // Do we have any currently being sold?!   
                 //currentlyListed.AddRange(GetCurrentlyForSale(petraItems, emblems, "Queen's Wrath: Rank 1", "Petra Emblems"));
@@ -66,12 +105,17 @@ namespace CollectionManagerSite.Controllers
                 //currentlyListed.AddRange(GetCurrentlyForSale(petraItems, shaders, "Queen's Wrath: Rank 3", "Petra Shaders"));
 
                 //if (shaders == null || emblems == null)
-                    //return RedirectToAction("Index", "Authentication");
+                //return RedirectToAction("Index", "Authentication");
 
                 return View(results);
             }
 
             return RedirectToAction("Index", "Authentication");
+        }
+
+        private DateTime GetExpiryTime()
+        {
+            throw new NotImplementedException();
         }
 
         private List<MissingItemModel> GetCurrentlyForSale(AdvisorsEndpoint allEvaItems, List<MissingItemModel> missingItems, string itemCategory, string type)
