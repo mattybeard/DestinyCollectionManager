@@ -208,7 +208,7 @@ namespace BungieWebClient
                 if (!string.IsNullOrEmpty(XboxAccountName))
                     XboxCharacterIds = RetrieveCharacterDetails(1, XboxAccountName);
 
-                if (!string.IsNullOrEmpty(XboxAccountName))
+                if (!string.IsNullOrEmpty(PsAccountName))
                     PsCharacterIds = RetrieveCharacterDetails(2, PsAccountName);
 
                 if (XboxCharacterIds != null && XboxCharacterIds.Any())
