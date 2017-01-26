@@ -10,8 +10,17 @@ namespace CollectionManagerSite.Controllers
     public class AuthenticationController : Controller
     {        
         public BungieClient WebClient { get; set; }
-        public ActionResult Index()
+        public ActionResult Index(int? debug = 0)
         {
+            ViewBag.Debug = false;
+
+            if (debug == 1)
+            {
+                ViewBag.Debug = true;
+                ViewBag.AccessToken = System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"] == null ? "" : System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"].Value;
+                ViewBag.RefreshToken = System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"] == null ? "" : System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"].Value;
+                ViewBag.Status = System.Web.HttpContext.Current.Request.Cookies["GOStatus"] == null ? "" : System.Web.HttpContext.Current.Request.Cookies["GOStatus"].Value;
+            }
             return View();
         }
 

@@ -8,7 +8,7 @@ namespace BungieWebClient.Model.Advisors
 {
     public class Round
     {
-        public object enemyRaceHash { get; set; }
+        public long enemyRaceHash { get; set; }
         public List<int> skulls { get; set; }
     }
 
@@ -35,7 +35,7 @@ namespace BungieWebClient.Model.Advisors
 
     public class PrimaryStat
     {
-        public object statHash { get; set; }
+        public long statHash { get; set; }
         public int value { get; set; }
         public int maximumValue { get; set; }
     }
@@ -64,13 +64,13 @@ namespace BungieWebClient.Model.Advisors
         public List<object> stats { get; set; }
         public bool canEquip { get; set; }
         public int equipRequiredLevel { get; set; }
-        public object unlockFlagHashRequiredToEquip { get; set; }
+        public long unlockFlagHashRequiredToEquip { get; set; }
         public int cannotEquipReason { get; set; }
         public int damageType { get; set; }
         public long damageTypeHash { get; set; }
         public int damageTypeNodeIndex { get; set; }
         public int damageTypeStepIndex { get; set; }
-        public object talentGridHash { get; set; }
+        public long talentGridHash { get; set; }
         public List<object> nodes { get; set; }
         public bool useCustomDyes { get; set; }
         public ArtRegions artRegions { get; set; }
@@ -130,7 +130,7 @@ namespace BungieWebClient.Model.Advisors
 
     public class Event
     {
-        public int eventHash { get; set; }
+        public long eventHash { get; set; }
         public string friendlyIdentifier { get; set; }
         public string eventIdentifier { get; set; }
         public string expirationDate { get; set; }
@@ -160,7 +160,7 @@ namespace BungieWebClient.Model.Advisors
 
     public class Nightfall
     {
-        public int activityBundleHash { get; set; }
+        public long activityBundleHash { get; set; }
         public long specificActivityHash { get; set; }
         public string expirationDate { get; set; }
         public List<Tier> tiers { get; set; }
@@ -208,7 +208,7 @@ namespace BungieWebClient.Model.Advisors
 
     public class Stat
     {
-        public object statHash { get; set; }
+        public long statHash { get; set; }
         public int value { get; set; }
         public int maximumValue { get; set; }
     }
@@ -219,14 +219,14 @@ namespace BungieWebClient.Model.Advisors
         public int stepIndex { get; set; }
         public int state { get; set; }
         public bool hidden { get; set; }
-        public int nodeHash { get; set; }
+        public long nodeHash { get; set; }
     }
 
     public class Objective
     {
-        public object objectiveHash { get; set; }
-        public int destinationHash { get; set; }
-        public int activityHash { get; set; }
+        public long objectiveHash { get; set; }
+        public long destinationHash { get; set; }
+        public long activityHash { get; set; }
         public int progress { get; set; }
         public bool hasProgress { get; set; }
         public bool isComplete { get; set; }
@@ -268,7 +268,7 @@ namespace BungieWebClient.Model.Advisors
 
     public class Data
     {
-        public int nightfallActivityHash { get; set; }
+        public long nightfallActivityHash { get; set; }
         public List<long> heroicStrikeHashes { get; set; }
         public List<long> dailyChapterHashes { get; set; }
         public string nightfallResetDate { get; set; }

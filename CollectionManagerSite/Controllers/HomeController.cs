@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using BungieWebClient;
@@ -19,38 +22,53 @@ namespace CollectionManagerSite.Controllers
     {
         private BungieClient webClient { get; set; }
 
-        public ActionResult Index()
+        public ActionResult Index(int console = 0)
         {
             var authorised = System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"] != null && System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"] != null;
 
             if (authorised)
             {                
-                if (webClient == null)
-                    webClient = new BungieClient(System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"].Value, System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"].Value);
-
+                webClient = new BungieClient(System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"].Value, System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"].Value);
                 webClient.RefreshAccessToken();
+                webClient.GetUserDetails();
 
-                var characterIds = RetriveCharacterDetails();
-                if (characterIds == null)
+                if (webClient.MembershipType == -1)
                     return RedirectToAction("Index", "Authentication");
+
+                var consoleChoice = console == 0 ? webClient.MembershipType : console;
+                var characterIds = consoleChoice == 1 ? webClient.XboxCharacterIds : webClient.PsCharacterIds;
+                ViewBag.Console = consoleChoice;
+                ViewBag.DualConsole = webClient.DualAccount;
+                
+                var shaders = GetVendorItems(characterIds, "Shader", 2420628997, consoleChoice);
+                var emblems = GetVendorItems(characterIds, "Emblem", 3301500998, consoleChoice);
+                var ships = GetVendorItems(characterIds, "Ship", 2244880194, consoleChoice);
+                var sparrows = GetVendorItems(characterIds, "Sparrow", 44395194, consoleChoice);
+
+                var results = new Dictionary<string, Dictionary<string, List<MissingItemModel>>>();
+                results.Add("Shaders", new Dictionary<string, List<MissingItemModel>>() { { "Needed", shaders } });
+                results.Add("Emblems", new Dictionary<string, List<MissingItemModel>>() { { "Needed", emblems } });
+                results.Add("Ships", new Dictionary<string, List<MissingItemModel>>() { { "Needed", ships } });
+                results.Add("Sparrows", new Dictionary<string, List<MissingItemModel>>() { { "Needed", sparrows } });
 
                 var evaItems = GetVendorMetadata(134701236);
-                var petraItems = GetVendorMetadata(1410745145);
+                var amandaItems = GetVendorMetadata(459708109);
+                //var petraItems = GetVendorMetadata(1410745145);
 
-                var shaders = GetVendorItems(characterIds, "Shader", 2420628997);
-                var emblems = GetVendorItems(characterIds, "Emblem", 3301500998);
+                results["Shaders"].Add("ForSale", GetCurrentlyForSale(evaItems, shaders, "Shaders", "Shaders"));
+                results["Emblems"].Add("ForSale", GetCurrentlyForSale(evaItems, emblems, "Emblems", "Emblems"));
+                results["Ships"].Add("ForSale", GetCurrentlyForSale(amandaItems, ships, "Ship Blueprints", "Ships"));
+                results["Sparrows"].Add("ForSale", GetCurrentlyForSale(amandaItems, sparrows, "Vehicles", "Sparrows"));
 
-                // Do we have any currently being sold?!
-                var currentlyListed = GetCurrentlyForSale(evaItems, shaders, "Shaders", "Eva Shaders");
-                currentlyListed.AddRange(GetCurrentlyForSale(evaItems, emblems, "Emblems", "Eva Emblems"));
-                currentlyListed.AddRange(GetCurrentlyForSale(petraItems, emblems, "Queen's Wrath: Rank 1", "Petra Emblems"));
-                currentlyListed.AddRange(GetCurrentlyForSale(petraItems, shaders, "Queen's Wrath: Rank 2", "Petra Shaders"));
-                currentlyListed.AddRange(GetCurrentlyForSale(petraItems, shaders, "Queen's Wrath: Rank 3", "Petra Shaders"));
+                // Do we have any currently being sold?!   
+                //currentlyListed.AddRange(GetCurrentlyForSale(petraItems, emblems, "Queen's Wrath: Rank 1", "Petra Emblems"));
+                //currentlyListed.AddRange(GetCurrentlyForSale(petraItems, shaders, "Queen's Wrath: Rank 2", "Petra Shaders"));
+                //currentlyListed.AddRange(GetCurrentlyForSale(petraItems, shaders, "Queen's Wrath: Rank 3", "Petra Shaders"));
 
-                if (shaders == null || emblems == null)
-                    return RedirectToAction("Index", "Authentication");
+                //if (shaders == null || emblems == null)
+                    //return RedirectToAction("Index", "Authentication");
 
-                return View(currentlyListed.Union(emblems).Union(shaders).ToList());
+                return View(results);
             }
 
             return RedirectToAction("Index", "Authentication");
@@ -68,11 +86,12 @@ namespace CollectionManagerSite.Controllers
             return items.Select(i => new MissingItemModel()
             {
                 Type = $"{type} currently for sale!",
-                Section = i.Section,
+                Faction = i.Faction,
                 Name = i.Name,
                 Icon = i.Icon,
+                SecondaryIcon = i.SecondaryIcon ?? "",
                 UnlockHashes = i.UnlockHashes,
-                Hash = i.Hash
+                Hash = i.Hash,          
             }).ToList();
         }
 
@@ -83,30 +102,62 @@ namespace CollectionManagerSite.Controllers
             return vendorDetails;
         }
 
-        private string[] RetriveCharacterDetails()
-        {
-            var membershipDetails = webClient.RunGetAsync<MembershipResponse>($"Platform/Destiny/SearchDestinyPlayer/{webClient.MembershipType}/{webClient.AccountName}/");
-            var _membershipId = membershipDetails?.Response?.FirstOrDefault();
-            if (_membershipId == null)
-            {
-                // this should be use the refresh token but for now lets re-authenticate
-                return null;
-            }
+        //private string[] RetriveCharacterDetails()
+        //{
+        //    if(webClient.MembershipType == 0 && webClient.AccountName == null)
+        //        SendErrorAlert(new Exception($"Error retrieving details - no account or authcode. {webClient.AccountName}{webClient.AuthCode}"));
+
+        //    var membershipDetails = webClient.RunGetAsync<MembershipResponse>($"Platform/Destiny/SearchDestinyPlayer/{webClient.MembershipType}/{webClient.AccountName}/");
+        //    var _membershipId = membershipDetails?.Response?.FirstOrDefault();
+        //    if (_membershipId == null)
+        //    {
+        //        // this should be use the refresh token but for now lets re-authenticate
+        //        return null;
+        //    }
             
-            webClient.MembershipType = _membershipId.membershipType;
+        //    webClient.MembershipType = _membershipId.membershipType;
 
-            var characterDetails = webClient.RunGetAsync<CharacterEndpoint>($"Platform/Destiny/{webClient.MembershipType}/Account/{_membershipId.membershipId}/Summary/");
-            var _characterIds = characterDetails.Response.data.characters.Select(c => c.characterBase.characterId).ToArray();
+        //    var characterDetails = webClient.RunGetAsync<CharacterEndpoint>($"Platform/Destiny/{webClient.MembershipType}/Account/{_membershipId.membershipId}/Summary/");
+        //    var _characterIds = characterDetails.Response.data.characters.Select(c => c.characterBase.characterId).ToArray();
 
-            return _characterIds;
+        //    return _characterIds;
+        //}
+
+        private void SendErrorAlert(Exception exception)
+        {
+            MailMessage msg = new MailMessage();
+
+            msg.From = new MailAddress("mattybeard@gmail.com");
+            msg.To.Add("mattybeard@gmail.com");
+            msg.Subject = "GO Exception";
+            msg.Body = exception.ToString();
+            SmtpClient client = new SmtpClient();
+            client.UseDefaultCredentials = true;
+            client.Host = "smtp.gmail.com";
+            client.Port = 587;
+            client.EnableSsl = true;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.Credentials = new NetworkCredential("mattybeard@gmail.com", "Baxter2242");
+            client.Timeout = 20000;
+            try
+            {
+                client.Send(msg);
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                msg.Dispose();
+            }
         }
-       
-        private List<MissingItemModel> GetVendorItems(string[] characterIds, string type, long vendorId)
+
+        private List<MissingItemModel> GetVendorItems(string[] characterIds, string type, long vendorId, int membershipType)
         {
             var itemsNeeded = new Dictionary<string, List<SaleItem>>();
             foreach (var character in characterIds)
             {
-                var itemsCollection = webClient.RunGetAsync<VendorPlatformResponse>($"Platform/Destiny/{webClient.MembershipType}/MyAccount/Character/{character}/Vendor/{vendorId}/");
+                var itemsCollection = webClient.RunGetAsync<VendorPlatformResponse>($"Platform/Destiny/{membershipType}/MyAccount/Character/{character}/Vendor/{vendorId}/");
                 if(itemsCollection.ErrorCode > 1)
                     throw new InvalidOperationException($"Problem getting your {type}s.");
 
@@ -141,15 +192,13 @@ namespace CollectionManagerSite.Controllers
                         var result = new MissingItemModel()
                         {
                             Type = type,
-                            Section = group.Key,
+                            Faction = group.Key,
                             Hash = inventoryItem.Response.data.inventoryItem.itemHash,
                             Name = inventoryItem.Response.data.inventoryItem.itemName,
                             Icon = inventoryItem.Response.data.inventoryItem.icon,
+                            SecondaryIcon = inventoryItem.Response.data.inventoryItem.secondaryIcon ?? "",
                             UnlockHashes = item.unlockStatuses.Select(i => i.unlockFlagHash)
                         };
-
-                        //var unlockHash = item.unlockStatuses.First().unlockFlagHash;
-                        //inventoryItem = webClient.RunGetAsync<InventoryItemPlatformResponse>($"/Platform/Destiny/Manifest/UnlockFlag/{unlockHash}/");
 
                         results.Add(result);
                     }

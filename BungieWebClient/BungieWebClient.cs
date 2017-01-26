@@ -5,11 +5,14 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Mail;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using BungieWebClient.Model.Authentication;
+using BungieWebClient.Model.Character;
 using BungieWebClient.Model.Gamertag;
+using BungieWebClient.Model.Membership;
 
 namespace BungieWebClient
 {
@@ -17,17 +20,23 @@ namespace BungieWebClient
     {
         public const string BungieBaseUri = "https://www.bungie.net/";
         public const string AccessTokenRequest = "Platform/App/GetAccessTokensFromCode/";
-        public const string RefreshTokenRequest = "Platform/App/GetAccessTokensFromRefreshToken/";
-        // public const string AuthenticationCodeRequest = "https://www.bungie.net/en/Application/Authorize/6871";
-        public const string AuthenticationCodeRequest = "https://www.bungie.net/en/Application/Authorize/11093"; 
-        private const int Success = 1;
+        public const string RefreshTokenRequest = "Platform/App/GetAccessTokensFromRefreshToken/";        
+        public const string AuthenticationCodeRequest = "https://www.bungie.net/en/Application/Authorize/11093";
         private const string ApiKey = "9681c0a6c9f44315bef80e15a4e3b469";
+        // public const string AuthenticationCodeRequest = "https://www.bungie.net/en/Application/Authorize/6871";
         // private const string ApiKey = "2aa2b040a1904c97b94550eaaabd54ab";
+        private const int Success = 1;
         private string _authCode;
         private string _accessToken;
         private string _refreshToken;
-        public string AccountName;
+        public string XboxAccountName;
+        public string[] XboxCharacterIds;
+
+        public string PsAccountName;
+        public string[] PsCharacterIds;
+        
         public int MembershipType;
+        public bool DualAccount { get; set; }
 
         public BungieClient(string accessToken, string refreshToken) : this()
         {
@@ -98,7 +107,7 @@ namespace BungieWebClient
             try
             {
                 HttpResponseMessage response = null;
-                if (!string.IsNullOrEmpty(_accessToken))
+                if (!string.IsNullOrEmpty(_accessToken) && endpoint != "Platform/App/GetAccessTokensFromRefreshToken/")
                 {
                     Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
                 }
@@ -127,9 +136,39 @@ namespace BungieWebClient
             }
             catch (Exception ex)
             {
+                SendErrorAlert(ex);
                 //log
             }
             return default(T);
+        }
+
+        private void SendErrorAlert(Exception exception)
+        {
+            MailMessage msg = new MailMessage();
+
+            msg.From = new MailAddress("mattybeard@gmail.com");
+            msg.To.Add("mattybeard@gmail.com");
+            msg.Subject = "GO Exception";
+            msg.Body = exception.ToString();
+            SmtpClient client = new SmtpClient();
+            client.UseDefaultCredentials = true;
+            client.Host = "smtp.gmail.com";
+            client.Port = 587;
+            client.EnableSsl = true;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.Credentials = new NetworkCredential("mattybeard@gmail.com", "Baxter2242");
+            client.Timeout = 20000;
+            try
+            {
+                client.Send(msg);
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                msg.Dispose();
+            }
         }
 
         public AuthenticationResponse ObtainAccessToken()
@@ -146,14 +185,14 @@ namespace BungieWebClient
 
         public ResponseBase RefreshAccessToken()
         {
-            var response = RunPostAsync<AuthenticationResponse>(new RefreshTokenRequest { RefreshToken = _refreshToken }, RefreshTokenRequest);
+            var response = RunPostAsync<AuthenticationResponse>(new RefreshTokenRequest { refreshToken = _refreshToken }, RefreshTokenRequest);
             if (response?.ErrorCode == Success)
             {
                 _accessToken = response.Response.AccessToken.Value;
-                _refreshToken = response.Response.RefreshToken.Value;                
+                _refreshToken = response.Response.RefreshToken.Value;
             }
 
-            GetUserDetails();
+            //GetUserDetails();
 
             return response;
         }
@@ -163,10 +202,66 @@ namespace BungieWebClient
             var response = RunGetAsync<GamertagResponse>("Platform/User/GetBungieNetUser/");
             if (response?.ErrorCode == Success)
             {
-                AccountName = response.Response?.GamerTag ?? response.Response?.PsnId ?? "";
-                MembershipType = response.Response?.GamerTag != null ? 1 : 2;
+                XboxAccountName = response.Response?.GamerTag ?? "";
+                PsAccountName = response.Response?.PsnId;
 
+                if (!string.IsNullOrEmpty(XboxAccountName))
+                    XboxCharacterIds = RetrieveCharacterDetails(1, XboxAccountName);
+
+                if (!string.IsNullOrEmpty(PsAccountName))
+                    PsCharacterIds = RetrieveCharacterDetails(2, PsAccountName);
+
+                if (XboxCharacterIds != null && XboxCharacterIds.Any())
+                    MembershipType = 1;
+                else if (PsCharacterIds != null && PsCharacterIds.Any())
+                    MembershipType = 2;
+                else
+                    MembershipType = -1;
+
+                if ((XboxCharacterIds != null && XboxCharacterIds.Any()) && (PsCharacterIds != null && PsCharacterIds.Any()))
+                    DualAccount = true;
+
+
+                //{
+                //    AccountName = response.Response?.PsnId;
+                //    MembershipType = 2;
+                //}
+
+                //else if (!string.IsNullOrEmpty(response.Response?.GamerTag))
+                //{
+                //    AccountName = response.Response?.GamerTag;
+                //    MembershipType = 1;
+                //}
+                //else
+                //{
+                //    AccountName = response.Response?.PsnId;
+                //    MembershipType = 2;
+                //}
+                //AccountName = response.Response?.GamerTag ?? response.Response?.PsnId ?? "";
+                //MembershipType = response.Response?.GamerTag != null ? 1 : 2;
             }
+            else
+            {
+                SendErrorAlert(new Exception($"GetUserDetailsFailed - Error Code:{response?.ErrorCode}      Message:{response?.Message}     Access Token:{_accessToken}     Refresh Token:{_refreshToken}"));
+            }
+        }
+        
+        private string[] RetrieveCharacterDetails(int membershipType, string membershipName)
+        {
+            var membershipDetails = RunGetAsync<MembershipResponse>($"Platform/Destiny/SearchDestinyPlayer/{membershipType}/{membershipName}/");
+            var membershipId = membershipDetails?.Response?.FirstOrDefault();
+            if (membershipId == null)
+            {
+                // this should be use the refresh token but for now lets re-authenticate
+                return null;
+            }
+
+            MembershipType = membershipId.membershipType;
+
+            var characterDetails = RunGetAsync<CharacterEndpoint>($"Platform/Destiny/{MembershipType}/Account/{membershipId.membershipId}/Summary/");
+            var _characterIds = characterDetails.Response.data.characters.Select(c => c.characterBase.characterId).ToArray();
+
+            return _characterIds;
         }
     }
 }

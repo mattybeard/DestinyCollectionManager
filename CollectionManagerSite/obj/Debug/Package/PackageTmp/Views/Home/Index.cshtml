@@ -1,40 +1,356 @@
-﻿@model List<CollectionManagerSite.Models.MissingItemModel>
+﻿@model Dictionary<string, Dictionary<string, List<CollectionManagerSite.Models.MissingItemModel>>>
 @{
-    int groupings = 3;
-    ViewBag.Title = "Missing Shaders & Emblems";
-   
+    ViewBag.Title = "Guardian Outfitter | Missing Shaders, Emblems, Ships & Sparrows";
 }
-@foreach (var type in Model.GroupBy(c => c.Type))
-{
-    <h1>@type.Key</h1>    
-    foreach (var group in type.GroupBy(t => t.Section))
+
+<div id="navigation" role="navigation" aria-label="Primary navigation" class="grid button-tabs--top">
+    <!-- Start: Platform switcher-->
+    <!-- Hide everything between comments when only one platform is available-->
+    <!-- Need to switch `is-disabled` and `is-active` classes between buttons-->
+    @if ((bool) ViewBag.DualConsole)
     {
-        <h2>@group.Key</h2>
-        <div>
-            @{ var grouped = group.Select((x, i) => new {x, i = i/groupings}).GroupBy(x => x.i, x => x.x); }
-            @foreach (var items in grouped)
-            {
-                <div class="row">
-                    @foreach (var item in items)
-                    {
-                        <div class="col-sm-4 text-center">
-                            <img src="@($"http://www.bungie.net/{item.Icon}")" alt="shader" />
-                            <p>@item.Name</p>
-                        </div>
-                    }
-                </div>
-            }
+        <div class="grid__item auto">
+            <div class="button-tabs button-tabs--platform">
+                <a href="?console=2" class="button button--playstation @((int)ViewBag.Console == 2? "is-active" : "is-disabled")">
+                    <span class="icon icon--playstation">PlayStation</span>
+                </a>
+                <a href="?console=1" class="button button--xbox @((int)ViewBag.Console == 1 ? "is-active" : "is-disabled")">
+                    <span class="icon icon--xbox">Xbox</span>
+                </a>
+            </div>
         </div>
     }
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <!-- Response Ad -->
-    <ins class="adsbygoogle"
-            style="display:block"
-            data-ad-client="ca-pub-5655051109573002"
-            data-ad-slot="2916154772"
-            data-ad-format="auto"></ins>
-    <script>
-(adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
+    <!-- End: Platform switch-->
+    <div class="grid__item fablet-auto">
+        <div class="button-tabs js-tab-controls"></div>
+    </div>
+</div>
+
+ <!-- Start: Emblems-->
+@if (Model.ContainsKey("Emblems"))
+{
+    <section class="tab js-tab">
+        <div class="prose">
+            <h1><a id="emblems" class="js-tab-heading">Emblems</a></h1>
+        </div>
+        @if (Model["Emblems"].ContainsKey("ForSale") && Model["Emblems"]["ForSale"].Any())
+        {
+            var emblemGroups = Model["Emblems"]["ForSale"].GroupBy(e => e.Faction);
+            <div class="prose">
+                <h2><span>Currently For sale</span></h2>
+            </div>
+
+            foreach (var emblemGroup in emblemGroups)
+            {
+                <div class="items">
+                    <div class="prose">
+                        <h3>@emblemGroup.Key</h3>
+                    </div>
+                    <div class="grid">
+                        @foreach (var emblem in emblemGroup)
+                        {
+
+                            <div class="grid__item fablet-one-half tablet-one-third">
+                                <div style="background-image: url(@($"https://www.bungie.net{emblem.SecondaryIcon}"))" class="item">
+                                    <div class="grid grid--middled">
+                                        <div class="grid__item auto">
+                                            <div class="item__image">
+                                                <img src="@($"https://www.bungie.net{emblem.Icon}")" alt=""/>
+                                            </div>
+                                        </div>
+                                        <div class="grid__item one-half">
+                                            <div class="item__title">@emblem.Name</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+
+        @if (Model["Emblems"].ContainsKey("Needed"))
+        {
+            var emblemGroups = Model["Emblems"]["Needed"].GroupBy(e => e.Faction);
+            <div class="prose">
+                <h2><span>Still Missing</span></h2>
+            </div>
+
+            foreach (var emblemGroup in emblemGroups)
+            {
+                <div class="items">
+                    <div class="prose">
+                        <h3>@emblemGroup.Key</h3>
+                    </div>
+                    <div class="grid">
+                        @foreach (var emblem in emblemGroup)
+                        {
+
+                            <div class="grid__item fablet-one-half tablet-one-third">
+                                <div style="background-image: url(@($"https://www.bungie.net{emblem.SecondaryIcon}"))" class="item">
+                                    <div class="grid grid--middled">
+                                        <div class="grid__item auto">
+                                            <div class="item__image">
+                                                <img src="@($"https://www.bungie.net{emblem.Icon}")" alt=""/>
+                                            </div>
+                                        </div>
+                                        <div class="grid__item one-half">
+                                            <div class="item__title">@emblem.Name</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        <div class="advert js-advert">
+            <div class="content-center content-center--gutter"><ins data-ad-client="ca-pub-5655051109573002" data-ad-slot="2916154772" data-ad-format="auto" class="adsbygoogle"></ins></div>
+        </div>
+    </section>    
 }
+<!-- End: Emblems-->
+<!-- Start: Shaders-->
+@if (Model.ContainsKey("Shaders"))
+{
+    <section class="tab js-tab">
+        <div class="prose">
+            <h1><a id="shaders" class="js-tab-heading">Shaders</a></h1>
+        </div>
+        @if (Model["Shaders"].ContainsKey("ForSale") && Model["Shaders"]["ForSale"].Any())
+        {
+            var shaderGroups = Model["Shaders"]["ForSale"].GroupBy(e => e.Faction);
+            <div class="prose">
+                <h2><span>Currently For sale</span></h2>
+            </div>
+
+            foreach (var shaderGroup in shaderGroups)
+            {
+                <div class="items">
+                    <div class="prose">
+                        <h3>@shaderGroup.Key</h3>
+                    </div>
+                    <div class="grid">
+                        @foreach (var shader in shaderGroup)
+                        {
+                            <div class="grid__item fablet-one-half tablet-one-third">
+                                <div class="item">
+                                    <div class="grid grid--middled">
+                                        <div class="grid__item auto">
+                                            <div class="item__image"><img src="@($"https://www.bungie.net{shader.Icon}")" alt="" /></div>
+                                        </div>
+                                        <div class="grid__item one-half">
+                                            <div class="item__title">@shader.Name</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        @if (Model["Shaders"].ContainsKey("Needed"))
+        {
+            var shaderGroups = Model["Shaders"]["Needed"].GroupBy(e => e.Faction);
+            <div class="prose">
+                <h2><span>Still Missing</span></h2>
+            </div>
+
+            foreach (var shaderGroup in shaderGroups)
+            {
+                <div class="items">
+                    <div class="prose">
+                        <h3>@shaderGroup.Key</h3>
+                    </div>
+                    <div class="grid">
+                        @foreach (var shader in shaderGroup)
+                        {
+                            <div class="grid__item fablet-one-half tablet-one-third">
+                                <div class="item">
+                                    <div class="grid grid--middled">
+                                        <div class="grid__item auto">
+                                            <div class="item__image"><img src="@($"https://www.bungie.net{shader.Icon}")" alt="" /></div>
+                                        </div>
+                                        <div class="grid__item one-half">
+                                            <div class="item__title">@shader.Name</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        <div class="advert js-advert">
+            <div class="content-center content-center--gutter"><ins data-ad-client="ca-pub-5655051109573002" data-ad-slot="2916154772" data-ad-format="auto" class="adsbygoogle"></ins></div>
+        </div>
+    </section>
+}
+<!-- End: Shaders-->
+<!-- Start: Ships-->
+@if (Model.ContainsKey("Ships"))
+{
+    <section class="tab js-tab">
+        <div class="prose">
+            <h1><a id="ships" class="js-tab-heading">Ships</a></h1>
+        </div>
+        @if (Model["Ships"].ContainsKey("ForSale") && Model["Ships"]["ForSale"].Any())
+        {
+            var shaderGroups = Model["Ships"]["ForSale"].GroupBy(e => e.Faction);
+            <div class="prose">
+                <h2><span>Currently For sale</span></h2>
+            </div>
+
+            foreach (var shaderGroup in shaderGroups)
+            {
+                <div class="items">
+                    <div class="prose">
+                        <h3>@shaderGroup.Key</h3>
+                    </div>
+                    <div class="grid">
+                        @foreach (var shader in shaderGroup)
+                        {
+                            <div class="grid__item fablet-one-half tablet-one-third">
+                                <div class="item">
+                                    <div class="grid grid--middled">
+                                        <div class="grid__item auto">
+                                            <div class="item__image"><img src="@($"https://www.bungie.net{shader.Icon}")" alt="" /></div>
+                                        </div>
+                                        <div class="grid__item one-half">
+                                            <div class="item__title">@shader.Name</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        @if (Model["Ships"].ContainsKey("Needed"))
+        {
+            var shaderGroups = Model["Ships"]["Needed"].GroupBy(e => e.Faction);
+            <div class="prose">
+                <h2><span>Still Missing</span></h2>
+            </div>
+
+            foreach (var shaderGroup in shaderGroups)
+            {
+                <div class="items">
+                    <div class="prose">
+                        <h3>@shaderGroup.Key</h3>
+                    </div>
+                    <div class="grid">
+                        @foreach (var shader in shaderGroup)
+                        {
+                            <div class="grid__item fablet-one-half tablet-one-third">
+                                <div class="item">
+                                    <div class="grid grid--middled">
+                                        <div class="grid__item auto">
+                                            <div class="item__image"><img src="@($"https://www.bungie.net{shader.Icon}")" alt="" /></div>
+                                        </div>
+                                        <div class="grid__item one-half">
+                                            <div class="item__title">@shader.Name</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        <div class="advert js-advert">
+            <div class="content-center content-center--gutter"><ins data-ad-client="ca-pub-5655051109573002" data-ad-slot="2916154772" data-ad-format="auto" class="adsbygoogle"></ins></div>
+        </div>
+    </section>
+}
+<!-- End: Shaders-->
+<!-- Start: Sparrows-->
+@if (Model.ContainsKey("Sparrows"))
+{
+    <section class="tab js-tab">
+        <div class="prose">
+            <h1><a id="sparrows" class="js-tab-heading">Sparrows</a></h1>
+        </div>
+        @if (Model["Sparrows"].ContainsKey("ForSale") && Model["Sparrows"]["ForSale"].Any())
+        {
+            var shaderGroups = Model["Sparrows"]["ForSale"].GroupBy(e => e.Faction);
+            <div class="prose">
+                <h2><span>Currently For sale</span></h2>
+            </div>
+
+            foreach (var shaderGroup in shaderGroups)
+            {
+                <div class="items">
+                    <div class="prose">
+                        <h3>@shaderGroup.Key</h3>
+                    </div>
+                    <div class="grid">
+                        @foreach (var shader in shaderGroup)
+                        {
+                            <div class="grid__item fablet-one-half tablet-one-third">
+                                <div class="item">
+                                    <div class="grid grid--middled">
+                                        <div class="grid__item auto">
+                                            <div class="item__image"><img src="@($"https://www.bungie.net{shader.Icon}")" alt="" /></div>
+                                        </div>
+                                        <div class="grid__item one-half">
+                                            <div class="item__title">@shader.Name</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        @if (Model["Sparrows"].ContainsKey("Needed"))
+        {
+            var shaderGroups = Model["Sparrows"]["Needed"].GroupBy(e => e.Faction);
+            <div class="prose">
+                <h2><span>Still Missing</span></h2>
+            </div>
+
+            foreach (var shaderGroup in shaderGroups)
+            {
+                <div class="items">
+                    <div class="prose">
+                        <h3>@shaderGroup.Key</h3>
+                    </div>
+                    <div class="grid">
+                        @foreach (var shader in shaderGroup)
+                        {
+                            <div class="grid__item fablet-one-half tablet-one-third">
+                                <div class="item">
+                                    <div class="grid grid--middled">
+                                        <div class="grid__item auto">
+                                            <div class="item__image"><img src="@($"https://www.bungie.net{shader.Icon}")" alt="" /></div>
+                                        </div>
+                                        <div class="grid__item one-half">
+                                            <div class="item__title">@shader.Name</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        <div class="advert js-advert">
+            <div class="content-center content-center--gutter"><ins data-ad-client="ca-pub-5655051109573002" data-ad-slot="2916154772" data-ad-format="auto" class="adsbygoogle"></ins></div>
+        </div>
+    </section>
+}
+<!-- End: Sparrows-->
+<div class="button-tabs button-tabs--bottom js-tab-controls"></div>
+
+
+
 
