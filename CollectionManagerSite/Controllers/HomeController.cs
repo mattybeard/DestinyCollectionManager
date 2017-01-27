@@ -100,14 +100,6 @@ namespace CollectionManagerSite.Controllers
                 results["Sparrows"]["ForSale"].AddRange(GetCurrentlyForSale(VanguardQuartermasterCache, sparrows, "Vehicles", "Sparrows"));
                 results["Sparrows"]["ForSale"].AddRange(GetCurrentlyForSale(CrucibleQuartermasterCache, sparrows, "Vehicles", "Sparrows"));
 
-                // Do we have any currently being sold?!   
-                //currentlyListed.AddRange(GetCurrentlyForSale(petraItems, emblems, "Queen's Wrath: Rank 1", "Petra Emblems"));
-                //currentlyListed.AddRange(GetCurrentlyForSale(petraItems, shaders, "Queen's Wrath: Rank 2", "Petra Shaders"));
-                //currentlyListed.AddRange(GetCurrentlyForSale(petraItems, shaders, "Queen's Wrath: Rank 3", "Petra Shaders"));
-
-                //if (shaders == null || emblems == null)
-                //return RedirectToAction("Index", "Authentication");
-
                 return View(results);
             }
 
@@ -116,19 +108,20 @@ namespace CollectionManagerSite.Controllers
 
         private void AddAdditionalEmblems(Dictionary<string, List<SaleItem>> itemsNeeded)
         {
-            var community = new Tuple<string, long[]>("Community", new long[] {1592588002});
+            var community = new Tuple<string, long[]>("Community", new long[] { 1592588002 });
             var promotional = new Tuple<string, long[]>("Promotional", new long[] { 1443409301, 1443409300, 3253299356, 3253299357, 2686650663, 1409854025, 1409854024,
                                                                                             1426631718, 1426631716, 1426631717, 1443409298, 1426631713, 1426631719, 1426631722, 1426631723,
-                                                                                            1443409303, 1443409302, 3580794342 });
+                                                                                            1443409303, 1443409302 });
             var unclassified = new Tuple<string, long[]>("Unclassified", new long[] {  1325965972, 1325965971, 1325965977, 1325965973, 70035233, 1443409299,
                                                                                             1342743555, 1443409308, 1409854029, 1592588001, 1342743553,  1592588000, 1426631714,
-                                                                                            1592588012, 1592588002, 1592588004, 1592588005, 1592588006, 1443409297, 1443409296,
+                                                                                            1592588012, 1592588004, 1592588005, 1592588006, 1443409297, 1443409296,
                                                                                              1409854023, 1592588003,  1409854030, 1426631715, 1325965969, 3983828201 });
 
             var raid = new Tuple<string, long[]>("Raid", new long[] { 3269301481, 2372257459, 2372257458, 2372257457, 2372257456, 2372257463, 185564349, 185564348, 185564351, 185564350, 185564345 });
             var srl = new Tuple<string, long[]>("SRL", new long[] { 1777175508 });
             var holiday = new Tuple<string, long[]>("Holiday", new long[] { 3347001814 });
             var riseOfIron = new Tuple<string, long[]>("Rise of Iron", new long[] { 3983828200, 3659569693 });
+            var trials = new Tuple<string, long[]>("Trials of Osiris", new long[] { 3347001815 });
 
 
             ConvertGroupToItems(itemsNeeded, community);
@@ -138,7 +131,14 @@ namespace CollectionManagerSite.Controllers
             ConvertGroupToItems(itemsNeeded, srl);
             ConvertGroupToItems(itemsNeeded, holiday);
             ConvertGroupToItems(itemsNeeded, riseOfIron);
+            ConvertGroupToItems(itemsNeeded, trials);
+        }
 
+        private void AddAdditionalShips(Dictionary<string, List<SaleItem>> itemsNeeded)
+        {
+            var ttk = new Tuple<string, long[]>("The Taken King", new long[] { 3644912838 });
+
+            ConvertGroupToItems(itemsNeeded, ttk);
         }
 
         private void ConvertGroupToItems(Dictionary<string, List<SaleItem>> itemsNeeded, Tuple<string, long[]> grouping)
@@ -192,28 +192,6 @@ namespace CollectionManagerSite.Controllers
 
             return vendorDetails;
         }
-
-        //private string[] RetriveCharacterDetails()
-        //{
-        //    if(webClient.MembershipType == 0 && webClient.AccountName == null)
-        //        SendErrorAlert(new Exception($"Error retrieving details - no account or authcode. {webClient.AccountName}{webClient.AuthCode}"));
-
-        //    var membershipDetails = webClient.RunGetAsync<MembershipResponse>($"Platform/Destiny/SearchDestinyPlayer/{webClient.MembershipType}/{webClient.AccountName}/");
-        //    var _membershipId = membershipDetails?.Response?.FirstOrDefault();
-        //    if (_membershipId == null)
-        //    {
-        //        // this should be use the refresh token but for now lets re-authenticate
-        //        return null;
-        //    }
-            
-        //    webClient.MembershipType = _membershipId.membershipType;
-
-        //    var characterDetails = webClient.RunGetAsync<CharacterEndpoint>($"Platform/Destiny/{webClient.MembershipType}/Account/{_membershipId.membershipId}/Summary/");
-        //    var _characterIds = characterDetails.Response.data.characters.Select(c => c.characterBase.characterId).ToArray();
-
-        //    return _characterIds;
-        //}
-
         private void SendErrorAlert(Exception exception)
         {
             MailMessage msg = new MailMessage();
@@ -245,12 +223,12 @@ namespace CollectionManagerSite.Controllers
 
         private List<MissingItemModel> GetVendorItems(string[] characterIds, string type, long vendorId, int membershipType)
         {
+            var firstLoop = true;
             var itemsNeeded = new Dictionary<string, List<SaleItem>>();
             if (type == "Emblem")
-            {
-                // Here we should add the custom ones in, so we can suppress if needed.
                 AddAdditionalEmblems(itemsNeeded);
-            }
+            if (type == "Ship")
+                AddAdditionalShips(itemsNeeded);
 
             foreach (var character in characterIds)
             {
@@ -260,9 +238,10 @@ namespace CollectionManagerSite.Controllers
 
                 foreach (var category in itemsCollection.Response.data.saleItemCategories)
                 {
-                    if (!itemsNeeded.ContainsKey(category.categoryTitle))
-                    {
-                        itemsNeeded.Add(category.categoryTitle, new List<SaleItem>());
+                    if (!itemsNeeded.ContainsKey(category.categoryTitle) || firstLoop)
+                    {       
+                        if(!itemsNeeded.ContainsKey(category.categoryTitle))                
+                            itemsNeeded.Add(category.categoryTitle, new List<SaleItem>());
 
                         foreach (var item in category.saleItems)
                         {
@@ -282,6 +261,8 @@ namespace CollectionManagerSite.Controllers
                         itemsNeeded["Unclassified"].RemoveAll(i => unlocked.Contains(i.item.itemHash));
                     }
                 }
+
+                firstLoop = false;
             }
 
             var results = new List<MissingItemModel>();
