@@ -14,6 +14,7 @@ using BungieWebClient.Model.InventoryItem;
 using BungieWebClient.Model.Membership;
 using BungieWebClient.Model.Vendor;
 using CollectionManagerSite.Models;
+using Item = BungieWebClient.Model.Character.Item;
 using SaleItem = BungieWebClient.Model.Vendor.SaleItem;
 
 namespace CollectionManagerSite.Controllers
@@ -113,6 +114,52 @@ namespace CollectionManagerSite.Controllers
             return RedirectToAction("Index", "Authentication");
         }
 
+        private void AddAdditionalEmblems(Dictionary<string, List<SaleItem>> itemsNeeded)
+        {
+            var community = new Tuple<string, long[]>("Community", new long[] {1592588002});
+            var promotional = new Tuple<string, long[]>("Promotional", new long[] { 1443409301, 1443409300, 3253299356, 3253299357, 2686650663, 1409854025, 1409854024,
+                                                                                            1426631718, 1426631716, 1426631717, 1443409298, 1426631713, 1426631719, 1426631722, 1426631723,
+                                                                                            1443409303, 1443409302, 3580794342 });
+            var unclassified = new Tuple<string, long[]>("Unclassified", new long[] {  1325965972, 1325965971, 1325965977, 1325965973, 70035233, 1443409299,
+                                                                                            1342743555, 1443409308, 1409854029, 1592588001, 1342743553,  1592588000, 1426631714,
+                                                                                            1592588012, 1592588002, 1592588004, 1592588005, 1592588006, 1443409297, 1443409296,
+                                                                                             1409854023, 1592588003,  1409854030, 1426631715, 1325965969, 3983828201 });
+
+            var raid = new Tuple<string, long[]>("Raid", new long[] { 3269301481, 2372257459, 2372257458, 2372257457, 2372257456, 2372257463, 185564349, 185564348, 185564351, 185564350, 185564345 });
+            var srl = new Tuple<string, long[]>("SRL", new long[] { 1777175508 });
+            var holiday = new Tuple<string, long[]>("Holiday", new long[] { 3347001814 });
+            var riseOfIron = new Tuple<string, long[]>("Rise of Iron", new long[] { 3983828200, 3659569693 });
+
+
+            ConvertGroupToItems(itemsNeeded, community);
+            ConvertGroupToItems(itemsNeeded, promotional);
+            ConvertGroupToItems(itemsNeeded, unclassified);
+            ConvertGroupToItems(itemsNeeded, raid);
+            ConvertGroupToItems(itemsNeeded, srl);
+            ConvertGroupToItems(itemsNeeded, holiday);
+            ConvertGroupToItems(itemsNeeded, riseOfIron);
+
+        }
+
+        private void ConvertGroupToItems(Dictionary<string, List<SaleItem>> itemsNeeded, Tuple<string, long[]> grouping)
+        {
+            itemsNeeded.Add(grouping.Item1, CreateSalesItems(grouping.Item2.Distinct()));
+        }
+
+        private List<SaleItem> CreateSalesItems(IEnumerable<long> promoCodes)
+        {
+            var salesItems = new List<SaleItem>();
+            foreach (var hash in promoCodes)
+            {
+                var saleItem = new SaleItem();
+                saleItem.item = new Item() {itemHash = hash};
+                saleItem.unlockStatuses = new List<UnlockStatus>();
+
+                salesItems.Add(saleItem);
+            }
+            return salesItems;
+        }
+
         private DateTime GetExpiryTime()
         {
             throw new NotImplementedException();
@@ -199,6 +246,12 @@ namespace CollectionManagerSite.Controllers
         private List<MissingItemModel> GetVendorItems(string[] characterIds, string type, long vendorId, int membershipType)
         {
             var itemsNeeded = new Dictionary<string, List<SaleItem>>();
+            if (type == "Emblem")
+            {
+                // Here we should add the custom ones in, so we can suppress if needed.
+                AddAdditionalEmblems(itemsNeeded);
+            }
+
             foreach (var character in characterIds)
             {
                 var itemsCollection = webClient.RunGetAsync<VendorPlatformResponse>($"Platform/Destiny/{membershipType}/MyAccount/Character/{character}/Vendor/{vendorId}/");
@@ -221,6 +274,12 @@ namespace CollectionManagerSite.Controllers
                     {
                         var unlocked = category.saleItems.Where(i => !i.unlockStatuses.Any() || i.unlockStatuses.All(s => s.isSet)).Select(i => i.item.itemHash);
                         itemsNeeded[category.categoryTitle].RemoveAll(i => unlocked.Contains(i.item.itemHash));
+                    }
+
+                    if (itemsNeeded.ContainsKey("Unclassified"))
+                    {
+                        var unlocked = category.saleItems.Where(i => !i.unlockStatuses.Any() || i.unlockStatuses.All(s => s.isSet)).Select(i => i.item.itemHash);
+                        itemsNeeded["Unclassified"].RemoveAll(i => unlocked.Contains(i.item.itemHash));
                     }
                 }
             }

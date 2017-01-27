@@ -40,7 +40,7 @@
                 <h2><span>Currently For sale</span></h2>
             </div>
 
-            foreach (var emblemGroup in emblemGroups)
+            foreach (var emblemGroup in emblemGroups.OrderBy(e => e.Key))
             {
                 <div class="items">
                     <div class="prose">
@@ -77,7 +77,7 @@
                 <h2><span>Still Missing</span></h2>
             </div>
 
-            foreach (var emblemGroup in emblemGroups)
+            foreach (var emblemGroup in emblemGroups.OrderBy(e => e.Key))
             {
                 <div class="items">
                     <div class="prose">
@@ -88,7 +88,7 @@
                         {
 
                             <div class="grid__item fablet-one-half tablet-one-third">
-                                <div style="background-image: url(@($"https://www.bungie.net{emblem.SecondaryIcon}"))" class="item">
+                                <div style="background-image: url(@($"https://www.bungie.net{emblem.SecondaryIcon}"))" class="item" data-id="@emblem.Hash">
                                     <div class="grid grid--middled">
                                         <div class="grid__item auto">
                                             <div class="item__image">
