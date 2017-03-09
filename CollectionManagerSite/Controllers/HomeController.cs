@@ -54,9 +54,9 @@ namespace CollectionManagerSite.Controllers
             {                
                 webClient = new BungieClient(System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"].Value, System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"].Value);
                 webClient.RefreshAccessToken();
-                webClient.GetUserDetails();
+                var gotDetails = webClient.GetUserDetails();
 
-                if (webClient.MembershipType == -1)
+                if (webClient.MembershipType == -1 || !gotDetails)
                     return RedirectToAction("Index", "Authentication");
 
                 var consoleChoice = console == 0 ? webClient.MembershipType : console;
@@ -117,7 +117,7 @@ namespace CollectionManagerSite.Controllers
                                                                                             1592588012, 1592588004, 1592588005, 1592588006, 1443409297, 1443409296,
                                                                                              1409854023, 1592588003,  1409854030, 1426631715, 1325965969, 3983828201 });
 
-            var raid = new Tuple<string, long[]>("Raid", new long[] { 3269301481, 2372257459, 2372257458, 2372257457, 2372257456, 2372257463, 185564349, 185564348, 185564351, 185564350, 185564345 });
+            var raid = new Tuple<string, long[]>("Raid", new long[] { /*3269301481, 2372257459, 2372257458, 2372257457, 2372257456, 2372257463, 185564349, 185564348, 185564351, 185564350, 185564345*/ });
             var srl = new Tuple<string, long[]>("SRL", new long[] { 1777175508 });
             var holiday = new Tuple<string, long[]>("Holiday", new long[] { 3347001814 });
             var riseOfIron = new Tuple<string, long[]>("Rise of Iron", new long[] { 3983828200, 3659569693 });
@@ -134,11 +134,18 @@ namespace CollectionManagerSite.Controllers
             ConvertGroupToItems(itemsNeeded, trials);
         }
 
+   
         private void AddAdditionalShips(Dictionary<string, List<SaleItem>> itemsNeeded)
         {
             var ttk = new Tuple<string, long[]>("The Taken King", new long[] { 3644912838 });
 
             ConvertGroupToItems(itemsNeeded, ttk);
+        }
+
+        private void AddAdditionalShaders(Dictionary<string, List<SaleItem>> itemsNeeded)
+        {
+            var raid = new Tuple<string, long[]>("Raid", new long[] { 898062439, 898062438 });
+            ConvertGroupToItems(itemsNeeded, raid);
         }
 
         private void ConvertGroupToItems(Dictionary<string, List<SaleItem>> itemsNeeded, Tuple<string, long[]> grouping)
@@ -229,6 +236,8 @@ namespace CollectionManagerSite.Controllers
                 AddAdditionalEmblems(itemsNeeded);
             if (type == "Ship")
                 AddAdditionalShips(itemsNeeded);
+            if(type=="Shader")
+                AddAdditionalShaders(itemsNeeded);
 
             foreach (var character in characterIds)
             {
