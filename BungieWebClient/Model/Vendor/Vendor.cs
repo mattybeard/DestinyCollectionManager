@@ -48,7 +48,7 @@ namespace BungieWebClient.Model.Vendor
         //public int itemStatus { get; set; }
         //public List<long> requiredUnlockFlags { get; set; }
         public List<UnlockStatus> unlockStatuses { get; set; }
-        //public List<long> failureIndexes { get; set; }
+        public List<long> failureIndexes { get; set; }
     }
 
     public class UnlockStatus
