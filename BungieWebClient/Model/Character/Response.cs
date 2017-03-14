@@ -166,16 +166,16 @@ namespace BungieWebClient.Model.Character
     public class Item
     {
         public long itemHash { get; set; }
-        //public string itemId { get; set; }
-        //public int quantity { get; set; }
-        //public int damageType { get; set; }
-        //public long damageTypeHash { get; set; }
-        //public bool isGridComplete { get; set; }
-        //public int transferStatus { get; set; }
-        //public int state { get; set; }
-        //public int characterIndex { get; set; }
-        //public long bucketHash { get; set; }
-        //public PrimaryStat primaryStat { get; set; }
+        public string itemId { get; set; }
+        public int quantity { get; set; }
+        public int damageType { get; set; }
+        public long damageTypeHash { get; set; }
+        public bool isGridComplete { get; set; }
+        public int transferStatus { get; set; }
+        public int state { get; set; }
+        public int characterIndex { get; set; }
+        public long bucketHash { get; set; }
+        public PrimaryStat primaryStat { get; set; }
     }
 
     public class Currency

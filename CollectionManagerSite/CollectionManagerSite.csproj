@@ -139,9 +139,17 @@
     <Content Include="Assets\img\meta\safari-pinned-tab.svg" />
     <Content Include="Assets\img\sprite\generated\icon-sprite.png" />
     <Content Include="Assets\img\sprite\generated\icon-sprite.svg" />
-    <Content Include="Assets\js\build\index.js" />
-    <Content Include="Assets\js\build\modernizr.js" />
-    <Content Include="Assets\js\lib\vendor\html5shiv.js" />
+    <Content Include="Assets\js\build\index.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\js\build\modernizr.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\js\lib\vendor\html5shiv.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="browserconfig.xml" />
+    <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\bootstrap.js" />
@@ -149,7 +157,9 @@
     <Content Include="Assets\font\roboto\regular.ttf" />
     <Content Include="Assets\font\roboto\regular.woff" />
     <Content Include="Assets\font\roboto\regular.woff2" />
-    <Content Include="Assets\js\build\index.js.map" />
+    <Content Include="Assets\js\build\index.js.map">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="manifest.json" />
     <None Include="Properties\PublishProfiles\DestinyCollectionManager - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\DestinyCollectionManager - Web Deploy.pubxml" />
@@ -200,6 +210,9 @@
       <Project>{AD443DCC-5B57-487A-9FF5-518E765B2F83}</Project>
       <Name>BungieWebClient</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
