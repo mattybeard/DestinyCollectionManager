@@ -312,16 +312,17 @@ namespace CollectionManagerSite.Controllers
                                     itemsNeeded[category.categoryTitle].Add(item);
                             }
                         }
+
                     }
-                    else
-                    {
-                        var unlocked = category.saleItems.Where(i => !i.failureIndexes.Any() && (!i.unlockStatuses.Any() || i.unlockStatuses.All(s => s.isSet))).Select(i => i.item.itemHash);
-                        itemsNeeded[category.categoryTitle].RemoveAll(i => unlocked.Contains(i.item.itemHash));
-                    }
+                    //else
+                    //{
+                    var unlocked = category.saleItems.Where(i => !i.failureIndexes.Any() && (!i.unlockStatuses.Any() || i.unlockStatuses.All(s => s.isSet))).Select(i => i.item.itemHash);
+                    itemsNeeded[category.categoryTitle].RemoveAll(i => unlocked.Contains(i.item.itemHash));
+                    //}
 
                     if (itemsNeeded.ContainsKey("Promotional"))
                     {
-                        var unlocked = category.saleItems.Where(i => !i.unlockStatuses.Any() || i.unlockStatuses.All(s => s.isSet)).Select(i => i.item.itemHash);
+                        unlocked = category.saleItems.Where(i => !i.unlockStatuses.Any() || i.unlockStatuses.All(s => s.isSet)).Select(i => i.item.itemHash);
                         itemsNeeded["Promotional"].RemoveAll(i => unlocked.Contains(i.item.itemHash));
                     }
                 }
