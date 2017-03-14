@@ -21,10 +21,10 @@ namespace BungieWebClient
         public const string BungieBaseUri = "https://www.bungie.net/";
         public const string AccessTokenRequest = "Platform/App/GetAccessTokensFromCode/";
         public const string RefreshTokenRequest = "Platform/App/GetAccessTokensFromRefreshToken/";
-        // public const string AuthenticationCodeRequest = "https://www.bungie.net/en/Application/Authorize/6871";
-        // private const string ApiKey = "2aa2b040a1904c97b94550eaaabd54ab";
-        public const string AuthenticationCodeRequest = "https://www.bungie.net/en/Application/Authorize/11093";
-        private const string ApiKey = "9681c0a6c9f44315bef80e15a4e3b469";
+        public const string AuthenticationCodeRequest = "https://www.bungie.net/en/Application/Authorize/6871";
+        private const string ApiKey = "2aa2b040a1904c97b94550eaaabd54ab";
+        // public const string AuthenticationCodeRequest = "https://www.bungie.net/en/Application/Authorize/11093";
+        // private const string ApiKey = "9681c0a6c9f44315bef80e15a4e3b469";
         private const int Success = 1;
         private string _authCode;
         private string _accessToken;
