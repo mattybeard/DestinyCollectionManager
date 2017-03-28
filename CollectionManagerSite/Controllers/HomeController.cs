@@ -48,6 +48,9 @@ namespace CollectionManagerSite.Controllers
 
         public ActionResult Index(int console = 0)
         {
+            return View("Maintenance");
+            
+
             var authorised = System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"] != null && System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"] != null;
 
             if (authorised)
@@ -63,10 +66,6 @@ namespace CollectionManagerSite.Controllers
                 var characterIds = consoleChoice == 1 ? webClient.XboxCharacterIds : webClient.PsCharacterIds;
                 ViewBag.Console = consoleChoice;
                 ViewBag.DualConsole = webClient.DualAccount;
-
-                //// TEMP
-                //TestRequest(characterIds, webClient.MembershipId ,consoleChoice);
-                ////END TEMP
 
                 var shaders = GetVendorItems(characterIds, "Shader", 2420628997, consoleChoice);
                 var emblems = GetVendorItems(characterIds, "Emblem", 3301500998, consoleChoice);
@@ -178,12 +177,14 @@ namespace CollectionManagerSite.Controllers
             var activities = new Tuple<string, long[]>("Activities", new long[] { 202245948 });
             var vendor = new Tuple<string, long[]>("Vendor", new long[] { 194424264 });
             var promo = new Tuple<string, long[]>("Promotional", new long[] { 194424265,1759332257,2561402280,2561402281,2561402282,2561402283,2561402286,3671454769, 2874472095 });
+            var holiday = new Tuple<string, long[]>("Holiday", new long[] { 1759332262, 3859658560, 3859658561, 3859658562 });
 
             ConvertGroupToItems(itemsNeeded, raid);
             ConvertGroupToItems(itemsNeeded, ttk);
             ConvertGroupToItems(itemsNeeded, activities);
             ConvertGroupToItems(itemsNeeded, vendor);
             ConvertGroupToItems(itemsNeeded, promo);
+            ConvertGroupToItems(itemsNeeded, holiday);
         }
 
         private void ConvertGroupToItems(Dictionary<string, List<SaleItem>> itemsNeeded, Tuple<string, long[]> grouping)
