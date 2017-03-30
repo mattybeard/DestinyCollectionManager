@@ -48,9 +48,8 @@ namespace CollectionManagerSite.Controllers
 
         public ActionResult Index(int console = 0)
         {
-            return View("Maintenance");
+            //return View("Maintenance");
             
-
             var authorised = System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"] != null && System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"] != null;
 
             if (authorised)
