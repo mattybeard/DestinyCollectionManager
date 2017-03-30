@@ -26,6 +26,7 @@ namespace CollectionManagerSite.Controllers
         private static AdvisorsEndpoint PetraCache { get; set; }
         private static AdvisorsEndpoint VanguardQuartermasterCache { get; set; }
         private static AdvisorsEndpoint CrucibleQuartermasterCache { get; set; }
+        private static AdvisorsEndpoint IronLordCache { get; set; }
         private static DateTime cacheExpiry { get; set; }
         private bool CacheExpired
         {
@@ -86,6 +87,7 @@ namespace CollectionManagerSite.Controllers
                     PetraCache = GetVendorMetadata(1410745145);
                     VanguardQuartermasterCache = GetVendorMetadata(2668878854);
                     CrucibleQuartermasterCache = GetVendorMetadata(3658200622);
+                    IronLordCache = GetVendorMetadata(2648860054);
 
                     cacheExpiry = DateTime.Now.AddMinutes(30);
                 }
@@ -94,9 +96,11 @@ namespace CollectionManagerSite.Controllers
                 results["Shaders"].Add("ForSale", GetCurrentlyForSale(EvaCache, shaders, "Shaders", "Shaders"));
                 results["Shaders"]["ForSale"].AddRange(GetCurrentlyForSale(PetraCache, shaders, "Queen's Wrath: Rank 2", "Shaders"));
                 results["Shaders"]["ForSale"].AddRange(GetCurrentlyForSale(PetraCache, shaders, "Queen's Wrath: Rank 3", "Shaders"));
+                results["Shaders"]["ForSale"].AddRange(GetCurrentlyForSale(IronLordCache, shaders, "Shaders", "Shaders"));
 
                 results["Emblems"].Add("ForSale", GetCurrentlyForSale(EvaCache, emblems, "Emblems", "Emblems"));
                 results["Emblems"]["ForSale"].AddRange(GetCurrentlyForSale(PetraCache, emblems, "Queen's Wrath: Rank 1", "Emblems"));
+                results["Emblems"]["ForSale"].AddRange(GetCurrentlyForSale(IronLordCache, emblems, "Emblems", "Emblems"));
 
                 results["Ships"].Add("ForSale", GetCurrentlyForSale(AmandaCache, ships, "Ship Blueprints", "Ships"));
 
