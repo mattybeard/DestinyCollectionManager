@@ -43,15 +43,17 @@ namespace CollectionManagerSite.Controllers
                 return false;
             }
         }
-        public BungieClient webClient { get; set; }
-        public string GetCollectionStatus()
+        public BungieClient WebClient { get; set; }
+        public string GetCollectionStatus(int id)
         {
-            var consoleChoice = 1;
-            webClient = new BungieClient(System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"].Value, System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"].Value);
-            webClient.RefreshAccessToken();
-            webClient.GetUserDetails();
+            var consoleChoice = id;
+            var type = string.Empty;
 
-            var characterIds = consoleChoice == 1 ? webClient.XboxCharacterIds : webClient.PsCharacterIds;
+            WebClient = new BungieClient(System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"].Value, System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"].Value);
+            WebClient.RefreshAccessToken();
+            WebClient.GetUserDetails();
+
+            var characterIds = consoleChoice == 1 ? WebClient.XboxCharacterIds : WebClient.PsCharacterIds;
             if (CacheExpired)
             {
                 EvaCache = GetVendorMetadata(134701236);
@@ -65,17 +67,25 @@ namespace CollectionManagerSite.Controllers
 
             var resultsToGet = new[] {"Shaders", "Emblems","Sparrows","Ships"};
             var temporaryResults = new ConcurrentBag<TypeResults>();
-            Parallel.ForEach(resultsToGet, t =>
+            if (!string.IsNullOrEmpty(type))
             {
-                temporaryResults.Add(CalculateItemResults(t, characterIds, consoleChoice));
-            });
+                temporaryResults.Add(CalculateItemResults(type, characterIds, consoleChoice));
+            }
+            else
+            {
+                Parallel.ForEach(resultsToGet, t =>
+                {
+                    temporaryResults.Add(CalculateItemResults(t, characterIds, consoleChoice));
+                });
+            }
 
             var results = new CompleteTypeResults()
             {
-                Emblems = temporaryResults.FirstOrDefault(t => t.ItemType == "Emblems"),
-                Shaders = temporaryResults.FirstOrDefault(t => t.ItemType == "Shaders"),
-                Sparrows = temporaryResults.FirstOrDefault(t => t.ItemType == "Sparrows"),
-                Ships = temporaryResults.FirstOrDefault(t => t.ItemType == "Ships")
+                Emblems = temporaryResults.FirstOrDefault(t => t.ItemType == "Emblems") ?? new TypeResults(),
+                Shaders = temporaryResults.FirstOrDefault(t => t.ItemType == "Shaders") ?? new TypeResults(),
+                ShadersExpiryDate = EvaCache.Response.data.vendor.nextRefreshDate,
+                Sparrows = temporaryResults.FirstOrDefault(t => t.ItemType == "Sparrows") ?? new TypeResults(),
+                Ships = temporaryResults.FirstOrDefault(t => t.ItemType == "Ships") ?? new TypeResults()
             };
 
             return JsonConvert.SerializeObject(results);
@@ -145,7 +155,7 @@ namespace CollectionManagerSite.Controllers
 
             foreach (var character in characterIds)
             {
-                var itemsCollection = webClient.RunGetAsync<VendorPlatformResponse>($"Platform/Destiny/{membershipType}/MyAccount/Character/{character}/Vendor/{vendorId}/");
+                var itemsCollection = WebClient.RunGetAsync<VendorPlatformResponse>($"Platform/Destiny/{membershipType}/MyAccount/Character/{character}/Vendor/{vendorId}/");
                 if (itemsCollection.ErrorCode > 1)
                     throw new InvalidOperationException($"Problem getting your {type}s.");
 
@@ -193,7 +203,7 @@ namespace CollectionManagerSite.Controllers
                 {
                     foreach (var item in group.Value)
                     {
-                        var inventoryItem = webClient.RunGetAsync<InventoryItemPlatformResponse>($"/Platform/Destiny/Manifest/InventoryItem/{item.item.itemHash}/");
+                        var inventoryItem = WebClient.RunGetAsync<InventoryItemPlatformResponse>($"/Platform/Destiny/Manifest/InventoryItem/{item.item.itemHash}/");
                         var result = new MissingItemModel()
                         {
                             Type = type,
@@ -216,7 +226,7 @@ namespace CollectionManagerSite.Controllers
 
         private AdvisorsEndpoint GetVendorMetadata(long vendorId)
         {
-            var vendorDetails = webClient.RunGetAsync<AdvisorsEndpoint>($"Platform/Destiny/Vendors/{vendorId}/Metadata/");
+            var vendorDetails = WebClient.RunGetAsync<AdvisorsEndpoint>($"Platform/Destiny/Vendors/{vendorId}/Metadata/");
 
             return vendorDetails;
         }

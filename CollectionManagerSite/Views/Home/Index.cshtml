@@ -7,7 +7,7 @@
     <!-- Start: Platform switcher-->
     <!-- Hide everything between comments when only one platform is available-->
     <!-- Need to switch `is-disabled` and `is-active` classes between buttons-->
-    @if ((bool) ViewBag.DualConsole)
+    @if ((bool)ViewBag.DualConsole)
     {
         <div class="grid__item auto">
             <div class="button-tabs button-tabs--platform">
@@ -29,17 +29,19 @@
  <!-- Start: Emblems-->
 <section class="tab js-tab">
     <div class="prose">
-        <h1><a id="emblems" class="js-tab-heading">Emblems</a>
+        <h1 id="emblemH1">
+            <a id="emblems" class="js-tab-heading">Emblems</a>
         </h1>
     </div>
     <div id="emblemsForSale"></div>
-  
-    <div class="prose">
-        <h2><span>Still Missing</span></h2>
-    </div>
     <div id="emblemsMissing"></div>
-    <div class="loading" style="width: 100%; align-content: center">
-        <img src="~/Assets/img/meta/hourglass.svg">
+
+    <div class="prose">
+        <h2><span>Guardian Outfitter</span></h2>
+    </div>
+    <div class="loading" style="width: 100%; align-content: center; height: 100px;">
+        <img src="~/Assets/img/meta/hourglass.svg" style="align-content: center; height: 50px; width: 100%">
+        <p style="align-content: center; height: 50px; width: 100%; text-align: center;">Calculating your collection - please hold on...</p>
     </div>
         
     <div class="advert js-advert">
@@ -55,12 +57,14 @@
         </h1>
     </div>
     <div id="shadersForSale"></div>
-    <div class="prose">
-        <h2><span>Still Missing</span></h2>
-    </div>
     <div id="shadersMissing"></div>
-    <div class="loading" style="width: 100%; align-content: center">
-        <img src="~/Assets/img/meta/hourglass.svg">
+    <div class="prose">
+        <h2><span>Guardian Outfitter</span></h2>
+    </div>
+    
+    <div class="loading" style="width: 100%; align-content: center; height: 100px;">
+        <img src="~/Assets/img/meta/hourglass.svg" style="align-content: center; height: 50px; width: 100%">
+        <p style="align-content: center; height: 50px; width: 100%; text-align: center;">Calculating your collection - please hold on...</p>
     </div>
     <div class="advert js-advert">
         <div class="content-center content-center--gutter"><ins data-ad-client="ca-pub-5655051109573002" data-ad-slot="2916154772" data-ad-format="auto" class="adsbygoogle"></ins></div>
@@ -75,13 +79,14 @@
         </h1>
     </div>
     <div id="shipsForSale"></div>
+    <div id="shipsMissing"></div>
     <div class="prose">
-        <h2><span>Still Missing</span></h2>
+        <h2><span>Guardian Outfitter</span></h2>
     </div>
-    <div class="loading" style="width: 100%; align-content: center">
-        <img src="~/Assets/img/meta/hourglass.svg">
+    <div class="loading" style="width: 100%; align-content: center; height: 100px;">
+        <img src="~/Assets/img/meta/hourglass.svg" style="align-content: center; height: 50px; width: 100%">
+        <p style="align-content: center; height: 50px; width: 100%; text-align: center;">Calculating your collection - please hold on...</p>
     </div>
-    <div id="shipsMissing"></div>   
     <div class="advert js-advert">
         <div class="content-center content-center--gutter"><ins data-ad-client="ca-pub-5655051109573002" data-ad-slot="2916154772" data-ad-format="auto" class="adsbygoogle"></ins></div>
     </div>
@@ -94,13 +99,14 @@
         </h1>
     </div>
     <div id="sparrowsForSale"></div>
+    <div id="sparrowsMissing"></div>
     <div class="prose">
-        <h2><span>Still Missing</span></h2>
+        <h2><span>Guardian Outfitter</span></h2>
+    </div>    
+    <div class="loading" style="width: 100%; align-content: center; height: 100px;">
+        <img src="~/Assets/img/meta/hourglass.svg" style="align-content: center; height: 50px; width: 100%">
+        <p style="align-content: center; height: 50px; width: 100%; text-align: center;">Calculating your collection - please hold on...</p>
     </div>
-    <div class="loading" style="width: 100%; align-content: center">
-        <img src="~/Assets/img/meta/hourglass.svg">
-    </div>
-    <div id="sparrowsMissing"></div>   
     <div class="advert js-advert">
         <div class="content-center content-center--gutter"><ins data-ad-client="ca-pub-5655051109573002" data-ad-slot="2916154772" data-ad-format="auto" class="adsbygoogle"></ins>
         </div>
@@ -113,177 +119,16 @@
 <div class="button-tabs button-tabs--bottom js-tab-controls"></div>
 
 <script type="text/javascript">
-
-    function processNeededResults(neededArray, sourceDiv) {
-        $.each(neededArray, function (index, faction) {
-            var factionDiv = "<div class=\"items js-toggle\">";
-            factionDiv += "<div class=\"prose\">";
-            factionDiv += "<h3 class=\"items__control js-toggle-control is-active\">";
-            factionDiv += faction.FactionName;
-            factionDiv += "</h3>";
-            factionDiv += "</div>";
-            factionDiv += "<div class=\"grid items__content js-toggle-content\">";
-            $.each(faction.Items, function (index, item) {
-                factionDiv += "<div class=\"grid__item fablet-one-half tablet-one-third\">";
-                factionDiv += "<div class=\"item\">";
-                factionDiv += "<div class=\"grid grid--middled\">";
-                factionDiv += "<div class=\"grid__item auto\">";
-                factionDiv += "<div class=\"item__image\">";
-                factionDiv += "<img src=\"https://www.bungie.net" +
-                    item.Icon +
-                    "\" alt=\"\" />";
-                factionDiv += " </div>";
-                factionDiv += " </div>";
-                factionDiv += "<div class=\"grid__item one-half\">";
-                factionDiv += "<div class=\"item__title\">";
-                factionDiv += item.Name;
-                factionDiv += " </div>";
-                factionDiv += " </div>";
-                factionDiv += " </div>";
-                factionDiv += " </div>";
-                factionDiv += " </div>";
-            });
-
-            factionDiv += "</div>";
-            factionDiv += "</div>";
-
-            $('#' + sourceDiv).append(factionDiv);
-        });
-    }
-
-    function processForSaleResults(forsaleArray, sourceDiv) {
-        if (forsaleArray.length > 0) {
-            var neededItems = "<div class=\"prose\"><h2><span>Currently For sale</span></h2></div>";
-            $.each(forsaleArray, function (index, faction) {
-                neededItems += "<div class=\"items\">";
-                neededItems += "<div class=\"prose\">";
-                neededItems += "<h3 class=\"items__control js-toggle-control\">" +
-                    faction.FactionName +
-                    "</h3>";
-                neededItems += "</div>";
-                neededItems += "<div class=\"grid items__content js-toggle-content\">";
-                $.each(faction.Items, function (index, item) {
-                    neededItems += "<div class=\"grid__item fablet-one-half tablet-one-third\">";
-                    neededItems += "<div class=\"item\">";
-                    neededItems += "<div class=\"grid grid--middled\">";
-                    neededItems += "<div class=\"grid__item auto\">";
-                    neededItems += "<div class=\"item__image\">";
-                    neededItems += "<img src=\"https://www.bungie.net" + item.Icon + "\" alt=\"\" />";
-                    neededItems += "</div>";
-                    neededItems += " </div>";
-                    neededItems += "<div class=\"grid__item one-half\"><div class=\"item__title\">" + item.Name + "</div></div>";
-                    neededItems += " </div>";
-                    neededItems += " </div>";
-                    neededItems += " </div>";
-                });
-                neededItems += "</div>";
-                neededItems += "</div>";
-            });
-
-            $('#' + sourceDiv).append(neededItems);
-        }
-    }
-
-    $(document).ready(function() {
+    $(document).ready(function () {
         $.ajax({
-            url: '../api/Details/GetCollectionStatus',
+            url: '../api/Details/GetCollectionStatus/@ViewBag.Console',
             type: 'GET',
             cache: false,
-            success: function(data) {
+            success: function (data) {
                 ProcessResults(data);
             }
         });
     });
-
-    function ProcessResults(data) {
-        var obj = JSON.parse(data);
-        
-        if (obj.Emblems.ForSale.length > 0) {
-            var neededEmblems = "<div class=\"prose\"><h2><span>Currently For sale</span></h2></div>";
-            $.each(obj.Emblems.ForSale, function (index, faction) {
-                neededEmblems += "<div class=\"items\">";
-                neededEmblems += "<div class=\"prose\">";
-                neededEmblems += "<h3 class=\"items__control js-toggle-control\">" +
-                    faction.FactionName +
-                    "</h3>";
-                neededEmblems += "</div>";
-                neededEmblems += "<div class=\"grid items__content js-toggle-content\">";
-                $.each(faction.Items, function (index, item) {
-                    neededEmblems += "<div class=\"grid__item fablet-one-half tablet-one-third\">";
-                    neededEmblems += "<div style=\"background-image: url(https://www.bungie.net" + item.SecondaryIcon + ")\" class=\"item\">";
-                    neededEmblems += "<div class=\"grid grid--middled\">";
-                    neededEmblems += "<div class=\"grid__item auto\">";
-                    neededEmblems += "<div class=\"item__image\">";
-                    neededEmblems += "<img src=\"https://www.bungie.net" + item.Icon + "\" alt=\"\" />";
-                    neededEmblems += "</div>";
-                    neededEmblems += " </div>";
-                    neededEmblems += "<div class=\"grid__item one-half\"><div class=\"item__title\">" + item.Name + "</div></div>";
-                    neededEmblems += " </div>";
-                    neededEmblems += " </div>";
-                    neededEmblems += " </div>";
-                });
-                neededEmblems += "</div>";
-                neededEmblems += "</div>";
-            });
-
-            $('#emblemsForSale').append(neededEmblems);
-        }
-
-        $.each(obj.Emblems.Needed, function(index, faction) {
-            var factionDiv = "<div class=\"items js-toggle\">";
-            factionDiv += "<div class=\"prose\">";
-            factionDiv += "<h3 class=\"items__control js-toggle-control is-active\">";
-            factionDiv += faction.FactionName;
-            factionDiv += "</h3>";
-            factionDiv += "</div>";
-            factionDiv += "<div class=\"grid items__content js-toggle-content\">";
-            $.each(faction.Items, function(index, item) {
-                factionDiv += "<div class=\"grid__item fablet-one-half tablet-one-third\">";
-                factionDiv += "<div style=\"background-image: url(https://www.bungie.net" +
-                    item.SecondaryIcon +
-                    ")\" class=\"item\" data-id=\"";
-                factionDiv += item.Hash;
-                factionDiv += "\">";
-                factionDiv += "<div class=\"grid grid--middled\">";
-                factionDiv += "<div class=\"grid__item auto\">";
-                factionDiv += "<div class=\"item__image\">";
-                factionDiv += "<img src=\"https://www.bungie.net" +
-                    item.Icon +
-                    "\" alt=\"\" />";
-                factionDiv += " </div>";
-                factionDiv += " </div>";
-                factionDiv += "<div class=\"grid__item one-half\">";
-                factionDiv += "<div class=\"item__title\">";
-                factionDiv += item.Name;
-                factionDiv += " </div>";
-                factionDiv += " </div>";
-                factionDiv += " </div>";
-                factionDiv += " </div>";
-                factionDiv += " </div>";
-            });
-
-            factionDiv += "</div>";
-            factionDiv += "</div>";
-
-            $('#emblemsMissing').append(factionDiv);
-            $('.loading').hide();
-        });
-
-        // Shaders        
-        processForSaleResults(obj.Shaders.ForSale, "shadersMissing");
-        processNeededResults(obj.Shaders.Needed, "shadersMissing");
-        
-
-        // Sparrows
-        processForSaleResults(obj.Sparrows.ForSale, "sparrowsForSale");
-        processNeededResults(obj.Sparrows.Needed, "sparrowsMissing");
-        
-        // Ships
-        processForSaleResults(obj.Ships.Needed, "shipsMissing");
-        processNeededResults(obj.Ships.Needed, "shipsMissing");
-
-        
-    }
 </script>
 
 

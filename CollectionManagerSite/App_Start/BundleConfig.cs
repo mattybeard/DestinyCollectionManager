@@ -16,6 +16,12 @@ namespace CollectionManagerSite
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/microModernizer.js"
                         ));
+
+            bundles.Add(new ScriptBundle("~/bundles/custom").Include(
+                      "~/Scripts/customJs.js"
+                      ));
+
+            BundleTable.EnableOptimizations = true;
         }
     }
 }

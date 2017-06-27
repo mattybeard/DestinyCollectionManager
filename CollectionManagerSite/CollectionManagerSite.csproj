@@ -177,7 +177,10 @@
     <Content Include="manifest.json" />
     <None Include="Properties\PublishProfiles\DestinyCollectionManager - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\DestinyCollectionManager - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\GuardianOutfitterDev - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\GuardianOutfitterDev - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\customJs.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\microModernizer.js" />
@@ -215,6 +218,8 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\Shared\Maintenance.cshtml" />
+    <Content Include="Views\Home\Error.cshtml" />
+    <Content Include="Views\Home\Complete.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

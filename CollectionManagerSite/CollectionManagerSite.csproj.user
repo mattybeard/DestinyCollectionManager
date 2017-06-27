@@ -10,7 +10,7 @@
     <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
     <WebStackScaffolding_ViewDialogWidth>600</WebStackScaffolding_ViewDialogWidth>
     <IISExpressSSLPort>44399</IISExpressSSLPort>
-    <NameOfLastUsedPublishProfile>DestinyCollectionManager - Web Deploy</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>GuardianOutfitterDev - Web Deploy</NameOfLastUsedPublishProfile>
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
