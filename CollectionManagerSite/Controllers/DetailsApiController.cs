@@ -195,13 +195,14 @@ namespace CollectionManagerSite.Controllers
                 firstLoop = false;
             }
 
-            var results = new List<MissingItemModel>();
+            var results = new ConcurrentBag<MissingItemModel>();
             foreach (var group in itemsNeeded)
             {
                 if (group.Value.Any())
                 {
-                    foreach (var item in group.Value)
+                    Parallel.ForEach(group.Value, item =>
                     {
+
                         var inventoryItem = WebClient.RunGetAsync<InventoryItemPlatformResponse>($"/Platform/Destiny/Manifest/InventoryItem/{item.item.itemHash}/");
                         var result = new MissingItemModel()
                         {
@@ -215,11 +216,11 @@ namespace CollectionManagerSite.Controllers
                         };
 
                         results.Add(result);
-                    }
+                    });                    
                 }
             }
 
-            return results;
+            return results.ToList();
         }
 
 
