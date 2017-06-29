@@ -125,9 +125,9 @@ namespace CollectionManagerSite.Controllers
                                                                                              1409854023, 1592588003,  1409854030, 1426631715, 1325965969, 3983828201  });
             var raid = new Tuple<string, long[]>("Raid", new long[] { 3269301481, 2372257459, 2372257458, 2372257457, 2372257456, 2372257463, 185564349, 185564348, 185564351, 185564350, 185564345 });
             var srl = new Tuple<string, long[]>("SRL", new long[] { 1777175508 });
-            var holiday = new Tuple<string, long[]>("Holiday", new long[] { 3347001814 });
+            var holiday = new Tuple<string, long[]>("Holiday", new long[] { 3347001814, 3347001815 });
             var riseOfIron = new Tuple<string, long[]>("Rise of Iron", new long[] { 3983828200, 3659569693 });
-            var trials = new Tuple<string, long[]>("Trials of Osiris", new long[] { 3347001815, 664737060 });
+            var trials = new Tuple<string, long[]>("Trials of Osiris", new long[] { 664737060 });
             var classEmblems  = new Tuple<string, long[]>("Class", new long[] { 1600609906, 1600609907, 2840347248, 2840347249, 3357380906, 3357380907 });
             var crucible = new Tuple<string, long[]>("Crucible", new long[] { 2326927634, 2326927635 });
             var houseOfWolves = new Tuple<string, long[]>("House of Wolves", new long[] { 1459499349 });
@@ -318,11 +318,9 @@ namespace CollectionManagerSite.Controllers
                         }
 
                     }
-                    //else
-                    //{
+
                     var unlocked = category.saleItems.Where(i => !i.failureIndexes.Any() && (!i.unlockStatuses.Any() || i.unlockStatuses.All(s => s.isSet))).Select(i => i.item.itemHash);
                     itemsNeeded[category.categoryTitle].RemoveAll(i => unlocked.Contains(i.item.itemHash));
-                    //}
 
                     if (itemsNeeded.ContainsKey("Promotional"))
                     {
