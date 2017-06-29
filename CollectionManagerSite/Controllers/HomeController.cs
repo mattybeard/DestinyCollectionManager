@@ -18,7 +18,8 @@ namespace CollectionManagerSite.Controllers
                 webClient = new BungieClient(System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"].Value, System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"].Value);
                 var response = webClient.RefreshAccessToken();
                 if(response.ErrorCode != 1)
-                    return View("Maintenance");
+                    return RedirectToAction("Index", "Authentication");
+                //return View("Maintenance");
 
                 var gotDetails = webClient.GetUserDetails();
                 if (webClient.MembershipType == -1 || !gotDetails)
@@ -34,15 +35,5 @@ namespace CollectionManagerSite.Controllers
 
             return RedirectToAction("Index", "Authentication");
         }
-
-        //public ActionResult Error()
-        //{
-        //    return View();
-        //}
-
-        //public ActionResult Complete()
-        //{
-        //    return View();
-        //}
     }
 }

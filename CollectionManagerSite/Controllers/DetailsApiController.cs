@@ -44,10 +44,9 @@ namespace CollectionManagerSite.Controllers
             }
         }
         public BungieClient WebClient { get; set; }
-        public string GetCollectionStatus(int id)
+        public string GetCollectionStatus(int id, string type)
         {
             var consoleChoice = id;
-            var type = string.Empty;
 
             WebClient = new BungieClient(System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"].Value, System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"].Value);
             WebClient.RefreshAccessToken();

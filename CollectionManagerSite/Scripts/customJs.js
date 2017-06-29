@@ -1,42 +1,48 @@
 ﻿
 function processNeededResults(neededArray, sourceDiv) {
-    $.each(neededArray, function (index, faction) {
-        var factionDiv = "<div class=\"items js-toggle\">";
-        factionDiv += "<div class=\"prose\">";
-        factionDiv += "<h3 class=\"items__control js-toggle-control is-active\">";
-        factionDiv += faction.FactionName;
-        factionDiv += "</h3>";
-        factionDiv += "</div>";
-        factionDiv += "<div class=\"grid items__content js-toggle-content\">";
-        $.each(faction.Items, function (index, item) {
-            factionDiv += "<div class=\"grid__item fablet-one-half tablet-one-third\">";
-            factionDiv += "<div class=\"item\">";
-            factionDiv += "<div class=\"grid grid--middled\">";
-            factionDiv += "<div class=\"grid__item auto\">";
-            factionDiv += "<div class=\"item__image\">";
-            factionDiv += "<img src=\"https://www.bungie.net" +
-                item.Icon +
-                "\" alt=\"\" />";
-            factionDiv += " </div>";
-            factionDiv += " </div>";
-            factionDiv += "<div class=\"grid__item one-half\">";
-            factionDiv += "<div class=\"item__title\">";
-            factionDiv += item.Name;
-            factionDiv += " </div>";
-            factionDiv += " </div>";
-            factionDiv += " </div>";
-            factionDiv += " </div>";
-            factionDiv += " </div>";
+    $('#' + sourceDiv).empty();
+    if (neededArray.length > 0) {
+        var factionDiv = "<div class=\"prose\"><h2><span>Still Missing</span></h2></div>";
+        $.each(neededArray, function(index, faction) {
+            factionDiv += "<div class=\"items js-toggle\">";
+            factionDiv += "<div class=\"prose\">";
+            factionDiv += "<h3 class=\"items__control js-toggle-control is-active\">";
+            factionDiv += faction.FactionName;
+            factionDiv += "</h3>";
+            factionDiv += "</div>";
+            factionDiv += "<div class=\"grid items__content js-toggle-content\">";
+            $.each(faction.Items, function(index, item) {
+                factionDiv += "<div class=\"grid__item fablet-one-half tablet-one-third\">";
+                factionDiv += "<div class=\"item\">";
+                factionDiv += "<div class=\"grid grid--middled\">";
+                factionDiv += "<div class=\"grid__item auto\">";
+                factionDiv += "<div class=\"item__image\">";
+                factionDiv += "<img src=\"https://www.bungie.net" +
+                    item.Icon +
+                    "\" alt=\"\" />";
+                factionDiv += " </div>";
+                factionDiv += " </div>";
+                factionDiv += "<div class=\"grid__item one-half\">";
+                factionDiv += "<div class=\"item__title\">";
+                factionDiv += item.Name;
+                factionDiv += " </div>";
+                factionDiv += " </div>";
+                factionDiv += " </div>";
+                factionDiv += " </div>";
+                factionDiv += " </div>";
+            });
+
+            factionDiv += "</div>";
+            factionDiv += "</div>";
         });
-
-        factionDiv += "</div>";
-        factionDiv += "</div>";
-
         $('#' + sourceDiv).append(factionDiv);
-    });
+    }
 }
 
 function processForSaleResults(forsaleArray, sourceDiv) {
+
+    $('#' + sourceDiv).empty();
+
     if (forsaleArray.length > 0) {
         var neededItems = "<div class=\"prose\"><h2><span>Currently For sale</span></h2></div>";
         $.each(forsaleArray, function (index, faction) {
@@ -69,16 +75,15 @@ function processForSaleResults(forsaleArray, sourceDiv) {
     }
 }
 
-
 function ProcessResults(data) {
     var obj = JSON.parse(data);
 
-    //alert(obj.ShadersExpiryDate);
     var expiryDate = "<a id=\"emblems\" class=\"js-tab-heading\">Emblems</a><span data-date=\"2017-06-27T08:00:00Z\" role=\"timer\" class=\"countdown js-countdown\"><span class=\"countdown__title\">Next reset</span><span class=\"countdown__units js-countdown-units\">27 Jun 2017</span></span>";
-    alert(expiryDate);
+   //  alert(expiryDate);
     $('#emblemH1').html(expiryDate);
 
     if (obj.Emblems.ForSale.length > 0) {
+        $('#emblemsForSale').empty();
         var neededEmblems = "<div class=\"prose\"><h2><span>Currently For sale</span></h2></div>";
         $.each(obj.Emblems.ForSale, function (index, faction) {
             neededEmblems += "<div class=\"items\">";
@@ -109,45 +114,48 @@ function ProcessResults(data) {
         $('#emblemsForSale').append(neededEmblems);
     }
 
-    $.each(obj.Emblems.Needed, function (index, faction) {
-        var factionDiv = "<div class=\"items js-toggle\">";
-        factionDiv += "<div class=\"prose\">";
-        factionDiv += "<h3 class=\"items__control js-toggle-control is-active\">";
-        factionDiv += faction.FactionName;
-        factionDiv += "</h3>";
-        factionDiv += "</div>";
-        factionDiv += "<div class=\"grid items__content js-toggle-content\">";
-        $.each(faction.Items, function (index, item) {
-            factionDiv += "<div class=\"grid__item fablet-one-half tablet-one-third\">";
-            factionDiv += "<div style=\"background-image: url(https://www.bungie.net" +
-                item.SecondaryIcon +
-                ")\" class=\"item\" data-id=\"";
-            factionDiv += item.Hash;
-            factionDiv += "\">";
-            factionDiv += "<div class=\"grid grid--middled\">";
-            factionDiv += "<div class=\"grid__item auto\">";
-            factionDiv += "<div class=\"item__image\">";
-            factionDiv += "<img src=\"https://www.bungie.net" +
-                item.Icon +
-                "\" alt=\"\" />";
-            factionDiv += " </div>";
-            factionDiv += " </div>";
-            factionDiv += "<div class=\"grid__item one-half\">";
-            factionDiv += "<div class=\"item__title\">";
-            factionDiv += item.Name;
-            factionDiv += " </div>";
-            factionDiv += " </div>";
-            factionDiv += " </div>";
-            factionDiv += " </div>";
-            factionDiv += " </div>";
+    if (obj.Emblems.Needed.length > 0) {
+        $('#emblemsMissing').empty();
+        var factionDiv = "<div class=\"prose\"><h2><span>Still Missing</span></h2></div>";
+        $.each(obj.Emblems.Needed, function(index, faction) {
+            factionDiv += "<div class=\"items js-toggle\">";
+            factionDiv += "<div class=\"prose\">";
+            factionDiv += "<h3 class=\"items__control js-toggle-control is-active\">";
+            factionDiv += faction.FactionName;
+            factionDiv += "</h3>";
+            factionDiv += "</div>";
+            factionDiv += "<div class=\"grid items__content js-toggle-content\">";
+            $.each(faction.Items, function(index, item) {
+                factionDiv += "<div class=\"grid__item fablet-one-half tablet-one-third\">";
+                factionDiv += "<div style=\"background-image: url(https://www.bungie.net" +
+                    item.SecondaryIcon +
+                    ")\" class=\"item\" data-id=\"";
+                factionDiv += item.Hash;
+                factionDiv += "\">";
+                factionDiv += "<div class=\"grid grid--middled\">";
+                factionDiv += "<div class=\"grid__item auto\">";
+                factionDiv += "<div class=\"item__image\">";
+                factionDiv += "<img src=\"https://www.bungie.net" +
+                    item.Icon +
+                    "\" alt=\"\" />";
+                factionDiv += " </div>";
+                factionDiv += " </div>";
+                factionDiv += "<div class=\"grid__item one-half\">";
+                factionDiv += "<div class=\"item__title\">";
+                factionDiv += item.Name;
+                factionDiv += " </div>";
+                factionDiv += " </div>";
+                factionDiv += " </div>";
+                factionDiv += " </div>";
+                factionDiv += " </div>";
+            });
+
+            factionDiv += "</div>";
+            factionDiv += "</div>";
         });
 
-        factionDiv += "</div>";
-        factionDiv += "</div>";
-
         $('#emblemsMissing').append(factionDiv);
-        $('.loading').hide();
-    });
+    }
 
     // Shaders
     processForSaleResults(obj.Shaders.ForSale, "shadersForSale");
@@ -158,8 +166,8 @@ function ProcessResults(data) {
     processNeededResults(obj.Sparrows.Needed, "sparrowsMissing");
 
     // Ships
-    processForSaleResults(obj.Ships.Needed, "shipsForSale");
+    processForSaleResults(obj.Ships.ForSale, "shipsForSale");
     processNeededResults(obj.Ships.Needed, "shipsMissing");
 
-
+    $('.loading').hide();
 }
