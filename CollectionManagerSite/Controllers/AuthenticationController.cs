@@ -21,6 +21,7 @@ namespace CollectionManagerSite.Controllers
                 ViewBag.RefreshToken = System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"] == null ? "" : System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"].Value;
                 ViewBag.Status = System.Web.HttpContext.Current.Request.Cookies["GOStatus"] == null ? "" : System.Web.HttpContext.Current.Request.Cookies["GOStatus"].Value;
             }
+            ViewBag.BungieAuthURL = BungieClient.AuthenticationCodeRequest;
             return View();
         }
 

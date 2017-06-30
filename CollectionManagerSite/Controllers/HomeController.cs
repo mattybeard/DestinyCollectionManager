@@ -17,7 +17,7 @@ namespace CollectionManagerSite.Controllers
             {
                 webClient = new BungieClient(System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"].Value, System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"].Value);
                 var response = webClient.RefreshAccessToken();
-                if(response.ErrorCode != 1)
+                if(response.ErrorCode != 1 && response.ErrorCode != 2110)
                     return RedirectToAction("Index", "Authentication");
                 //return View("Maintenance");
 
