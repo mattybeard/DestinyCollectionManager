@@ -55,7 +55,8 @@
 <!-- Start: Shaders-->
 <section class="tab js-tab">
     <div class="prose">
-        <h1><a id="shaders" class="js-tab-heading">Shaders</a>
+        <h1 id="shadersH1">
+            <a id="shaders" class="js-tab-heading">Shaders</a>
         </h1>
     </div>
     <div id="shadersForSale"></div>
@@ -79,7 +80,8 @@
 <!-- Start: Ships-->
 <section class="tab js-tab">
     <div class="prose">
-        <h1><a id="ships" class="js-tab-heading">Ships</a>
+        <h1 id="shipsH1">>
+            <a id="ships" class="js-tab-heading">Ships</a>
         </h1>
     </div>
     <div id="shipsForSale"></div>
@@ -103,7 +105,8 @@
 <!-- Start: Sparrows-->
 <section class="tab js-tab">
     <div class="prose">
-        <h1><a id="sparrows" class="js-tab-heading">Sparrows</a>
+        <h1 id="sparrowsH1">>
+            <a id="sparrows" class="js-tab-heading">Sparrows</a>
         </h1>
     </div>
     <div id="sparrowsForSale"></div>
@@ -135,8 +138,12 @@
         getDetails();
     });
 
-    var getDetails = function() {
-        var type = $('#switcher').find('.is-active').html();
+    var getDetails = function () {
+
+        var type = $('#switcher').find('.is-active').html() || "Emblems";
+
+        // alert(type);
+
         $('.loading').show();
 
         $.ajax({
