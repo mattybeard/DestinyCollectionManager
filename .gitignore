@@ -245,5 +245,3 @@ ModelManifest.xml
 Web.config
 Web.Debug.config
 Web.Release.config
-App.Debug.config
-App.Release.config
