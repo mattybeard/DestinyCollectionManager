@@ -7,6 +7,7 @@ using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using BungieDatabaseClient;
 using BungieWebClient;
 using BungieWebClient.Model.Advisors;
 using BungieWebClient.Model.Character;
@@ -50,7 +51,12 @@ namespace CollectionManagerSite.Controllers
         public ActionResult Index(int console = 0)
         {
             //return View("Maintenance");
+
+            var something = new DestinyDailyEntities();
+            var test2 = something.Database.Connection.ConnectionString;
+            var test = something.bountydays.First();
             
+
             var authorised = System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"] != null && System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"] != null;
 
             if (authorised)
