@@ -242,5 +242,8 @@ ModelManifest.xml
 .fake/
 
 #Web Configs
+Web.config
 Web.Debug.config
 Web.Release.config
+App.Debug.config
+App.Release.config
