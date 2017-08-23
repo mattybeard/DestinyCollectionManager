@@ -52,11 +52,6 @@ namespace CollectionManagerSite.Controllers
         {
             //return View("Maintenance");
 
-            var something = new DestinyDailyEntities();
-            var test2 = something.Database.Connection.ConnectionString;
-            var test = something.bountydays.First();
-            
-
             var authorised = System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"] != null && System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"] != null;
 
             if (authorised)
@@ -114,10 +109,32 @@ namespace CollectionManagerSite.Controllers
                 results["Sparrows"]["ForSale"].AddRange(GetCurrentlyForSale(VanguardQuartermasterCache, sparrows, "Vehicles", "Sparrows"));
                 results["Sparrows"]["ForSale"].AddRange(GetCurrentlyForSale(CrucibleQuartermasterCache, sparrows, "Vehicles", "Sparrows"));
 
+                GetAdditionalDetails(results);
+                
                 return View(results);
             }
 
             return RedirectToAction("Index", "Authentication");
+        }
+
+        private void GetAdditionalDetails(Dictionary<string, Dictionary<string, List<MissingItemModel>>> results)
+        {
+            var db = new DestinyDailyEntities();
+            foreach (var location in results)
+            {
+                foreach (var group in location.Value)
+                {
+                    foreach (var item in group.Value)
+                    {
+                        var matchingItem = db.GuardianOutfitterItemInformations.FirstOrDefault(go => go.id == item.Hash);
+
+                        if (matchingItem != null && matchingItem.obtainable.HasValue)
+                            item.Obtainable = matchingItem.obtainable.Value;
+                        else
+                            item.Obtainable = true;
+                    }
+                }
+            }
         }
 
         private void AddAdditionalEmblems(Dictionary<string, List<SaleItem>> itemsNeeded)
@@ -158,7 +175,7 @@ namespace CollectionManagerSite.Controllers
         {
             var ttk = new Tuple<string, long[]>("The Taken King", new long[] { 3644912838 });
             var crucible = new Tuple<string, long[]>("Crucible", new long[] { 1096884848,1096884849,1096884850,1096884851,1096884852,1096884853,1096884854,1096884855,1096884860,1096884861,1609120940,1609120941 });
-            var promo = new Tuple<string, long[]>("Promotional", new long[] { 1539265118,2390487995 });
+            var promo = new Tuple<string, long[]>("Promotional", new long[] { 1539265118,2390487995, 1539265118, 3043619338});
 
             ConvertGroupToItems(itemsNeeded, ttk);
             ConvertGroupToItems(itemsNeeded, crucible);

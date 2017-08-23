@@ -12,13 +12,11 @@ namespace BungieDatabaseClient
     using System;
     using System.Collections.Generic;
     
-    public partial class bountyday
+    public partial class GuardianOutfitterItemInformation
     {
-        public int id { get; set; }
-        public long bountyinfoid { get; set; }
-        public int day { get; set; }
-        public int month { get; set; }
-        public int year { get; set; }
-        public string vendor { get; set; }
+        public long id { get; set; }
+        public string name { get; set; }
+        public Nullable<bool> obtainable { get; set; }
+        public string how_to { get; set; }
     }
 }

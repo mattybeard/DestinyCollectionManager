@@ -51,9 +51,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="bountyday.cs">
-      <DependentUpon>DbEntities.tt</DependentUpon>
-    </Compile>
     <Compile Include="BungieDbClient.cs" />
     <Compile Include="DbEntities.Context.cs">
       <AutoGen>True</AutoGen>
@@ -69,6 +66,9 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>DbEntities.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="GuardianOutfitterItemInformation.cs">
+      <DependentUpon>DbEntities.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

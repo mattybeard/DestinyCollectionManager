@@ -25,6 +25,6 @@ namespace BungieDatabaseClient
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<bountyday> bountydays { get; set; }
+        public virtual DbSet<GuardianOutfitterItemInformation> GuardianOutfitterItemInformations { get; set; }
     }
 }
