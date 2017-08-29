@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
+using BungieDatabaseClient;
 using BungieWebClient;
 using CollectionManagerSite.Models;
 

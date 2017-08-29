@@ -3,6 +3,7 @@
     ViewBag.Title = "Guardian Outfitter | Missing Shaders, Emblems, Ships & Sparrows";
 }
 
+
 <div id="navigation" role="navigation" aria-label="Primary navigation" class="grid button-tabs--top">
     <!-- Start: Platform switcher-->
     <!-- Hide everything between comments when only one platform is available-->
@@ -11,10 +12,10 @@
     {
         <div class="grid__item auto">
             <div class="button-tabs button-tabs--platform">
-                <a href="?console=2" class="button button--playstation @((int)ViewBag.Console == 2? "is-active" : "is-disabled")">
+                <a href="?console=2" class="button button--playstation @((int) ViewBag.Console == 2 ? "is-active" : "is-disabled")">
                     <span class="icon icon--playstation">PlayStation</span>
                 </a>
-                <a href="?console=1" class="button button--xbox @((int)ViewBag.Console == 1 ? "is-active" : "is-disabled")">
+                <a href="?console=1" class="button button--xbox @((int) ViewBag.Console == 1 ? "is-active" : "is-disabled")">
                     <span class="icon icon--xbox">Xbox</span>
                 </a>
             </div>
@@ -25,6 +26,15 @@
         <div id="switcher" class="button-tabs js-tab-controls"></div>
     </div>
 </div>
+
+<div class="content-center--centered">
+    <div class="prose">
+        <h1>Preparing for Destiny 2</h1>
+        <p>We have now decided to keep the Destiny Guardian Outfitter online whilst we prepare for Destiny 2.</p>
+        <p>If you are reading this message, we currently DO NOT support Destiny 2 but will as soon as we can.</p>
+    </div>
+</div>
+
 
  <!-- Start: Emblems-->
 <section class="tab js-tab">
