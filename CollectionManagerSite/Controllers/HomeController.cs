@@ -50,8 +50,6 @@ namespace CollectionManagerSite.Controllers
 
         public ActionResult Index(int console = 0)
         {
-            //return View("Maintenance");
-
             var authorised = System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"] != null && System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"] != null;
 
             if (authorised)
@@ -260,7 +258,7 @@ namespace CollectionManagerSite.Controllers
 
         private AdvisorsEndpoint GetVendorMetadata(long vendorId)
         {
-            var vendorDetails = webClient.RunGetAsync<AdvisorsEndpoint>($"Platform/Destiny/Vendors/{vendorId}/Metadata/");
+            var vendorDetails = webClient.RunGetAsync<AdvisorsEndpoint>($"D1/Platform/Destiny/Vendors/{vendorId}/Metadata/");
 
             return vendorDetails;
         }
@@ -316,7 +314,7 @@ namespace CollectionManagerSite.Controllers
 
             foreach (var character in characterIds)
             {
-                var itemsCollection = webClient.RunGetAsync<VendorPlatformResponse>($"Platform/Destiny/{membershipType}/MyAccount/Character/{character}/Vendor/{vendorId}/");
+                var itemsCollection = webClient.RunGetAsync<VendorPlatformResponse>($"D1/Platform/Destiny/{membershipType}/MyAccount/Character/{character}/Vendor/{vendorId}/");
                 if(itemsCollection.ErrorCode > 1)
                     throw new InvalidOperationException($"Problem getting your {type}s.");
 
@@ -362,7 +360,7 @@ namespace CollectionManagerSite.Controllers
                 {
                     foreach (var item in group.Value)
                     {
-                        var inventoryItem = webClient.RunGetAsync<InventoryItemPlatformResponse>($"/Platform/Destiny/Manifest/InventoryItem/{item.item.itemHash}/");
+                        var inventoryItem = webClient.RunGetAsync<InventoryItemPlatformResponse>($"/D1/Platform/Destiny/Manifest/InventoryItem/{item.item.itemHash}/");
                         var result = new MissingItemModel()
                         {
                             Type = type,
