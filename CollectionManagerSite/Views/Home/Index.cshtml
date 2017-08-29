@@ -51,7 +51,7 @@
                         {
 
                             <div class="grid__item fablet-one-half tablet-one-third">
-                                <div style="background-image: url(@($"https://www.bungie.net{emblem.SecondaryIcon}"))" class="item">
+                                <div style="background-image: url(@($"https://www.bungie.net{emblem.SecondaryIcon}"))" class="item @(emblem.Obtainable ? "" : "item--unobtainable")">
                                     <div class="grid grid--middled">
                                         <div class="grid__item auto">
                                             <div class="item__image">
@@ -86,9 +86,8 @@
                     <div class="grid items__content js-toggle-content">
                         @foreach (var emblem in emblemGroup)
                         {
-
                             <div class="grid__item fablet-one-half tablet-one-third">
-                                <div style="background-image: url(@($"https://www.bungie.net{emblem.SecondaryIcon}"))" class="item" data-id="@emblem.Hash">
+                                <div style="background-image: url(@($"https://www.bungie.net{emblem.SecondaryIcon}"))" class="item @(emblem.Obtainable ? "" : "item--unobtainable") ? " data-id="@emblem.Hash">
                                     <div class="grid grid--middled">
                                         <div class="grid__item auto">
                                             <div class="item__image">
@@ -136,7 +135,7 @@
                         @foreach (var shader in shaderGroup)
                         {
                             <div class="grid__item fablet-one-half tablet-one-third">
-                                <div class="item">
+                                <div class="item @(shader.Obtainable ? "" : "item--unobtainable")">
                                     <div class="grid grid--middled">
                                         <div class="grid__item auto">
                                             <div class="item__image"><img src="@($"https://www.bungie.net{shader.Icon}")" alt="" /></div>
@@ -169,7 +168,7 @@
                         @foreach (var shader in shaderGroup)
                         {
                             <div class="grid__item fablet-one-half tablet-one-third">
-                                <div class="item">
+                                <div class="item @(shader.Obtainable ? "" : "item--unobtainable")">
                                     <div class="grid grid--middled">
                                         <div class="grid__item auto">
                                             <div class="item__image"><img src="@($"https://www.bungie.net{shader.Icon}")" alt="" /></div>
@@ -215,7 +214,7 @@
                         @foreach (var shader in shaderGroup)
                         {
                             <div class="grid__item fablet-one-half tablet-one-third">
-                                <div class="item">
+                                <div class="item @(shader.Obtainable ? "" : "item--unobtainable")">
                                     <div class="grid grid--middled">
                                         <div class="grid__item auto">
                                             <div class="item__image"><img src="@($"https://www.bungie.net{shader.Icon}")" alt="" /></div>
@@ -248,7 +247,7 @@
                         @foreach (var shader in shaderGroup)
                         {
                             <div class="grid__item fablet-one-half tablet-one-third">
-                                <div class="item">
+                                <div class="item @(shader.Obtainable ? "" : "item--unobtainable")">
                                     <div class="grid grid--middled">
                                         <div class="grid__item auto">
                                             <div class="item__image"><img src="@($"https://www.bungie.net{shader.Icon}")" alt="" /></div>
@@ -294,7 +293,7 @@
                         @foreach (var shader in shaderGroup)
                         {
                             <div class="grid__item fablet-one-half tablet-one-third">
-                                <div class="item">
+                                <div class="item @(shader.Obtainable ? "" : "item--unobtainable")">
                                     <div class="grid grid--middled">
                                         <div class="grid__item auto">
                                             <div class="item__image"><img src="@($"https://www.bungie.net{shader.Icon}")" alt="" /></div>
@@ -327,7 +326,7 @@
                         @foreach (var shader in shaderGroup)
                         {
                             <div class="grid__item fablet-one-half tablet-one-third">
-                                <div class="item">
+                                <div class="item @(shader.Obtainable ? "" : "item--unobtainable")">
                                     <div class="grid grid--middled">
                                         <div class="grid__item auto">
                                             <div class="item__image"><img src="@($"https://www.bungie.net{shader.Icon}")" alt="" /></div>
