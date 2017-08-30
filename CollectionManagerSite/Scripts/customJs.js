@@ -13,7 +13,7 @@ function processNeededResults(neededArray, sourceDiv) {
             factionDiv += "<div class=\"grid items__content js-toggle-content\">";
             $.each(faction.Items, function(index, item) {
                 factionDiv += "<div class=\"grid__item fablet-one-half tablet-one-third\">";
-                factionDiv += "<div class=\"item\">";
+                factionDiv += "<div class=\"item" + (item.Obtainable ? "" : " item--unobtainable") + "\">";
                 factionDiv += "<div class=\"grid grid--middled\">";
                 factionDiv += "<div class=\"grid__item auto\">";
                 factionDiv += "<div class=\"item__image\">";
@@ -23,7 +23,7 @@ function processNeededResults(neededArray, sourceDiv) {
                 factionDiv += " </div>";
                 factionDiv += " </div>";
                 factionDiv += "<div class=\"grid__item one-half\">";
-                factionDiv += "<div class=\"item__title\">";
+                factionDiv += "<div class=\"item__title\"" + (item.Obtainable ? "" : " data-tooltip=\"No longer obtainable\"") + ">";
                 factionDiv += item.Name;
                 factionDiv += " </div>";
                 factionDiv += " </div>";
@@ -55,10 +55,10 @@ function processForSaleResults(forsaleArray, sourceDiv) {
             neededItems += "<div class=\"grid items__content js-toggle-content\">";
             $.each(faction.Items, function (index, item) {
                 neededItems += "<div class=\"grid__item fablet-one-half tablet-one-third\">";
-                neededItems += "<div class=\"item\">";
+                neededItems += "<div class=\"item" + (item.Obtainable ? "" : " item--unobtainable") + "\">";
                 neededItems += "<div class=\"grid grid--middled\">";
                 neededItems += "<div class=\"grid__item auto\">";
-                neededItems += "<div class=\"item__image\">";
+                neededItems += "<div class=\"item__image\"" + (item.Obtainable ? "" : " data-tooltip=\"No longer obtainable\"") + ">";
                 neededItems += "<img src=\"https://www.bungie.net" + item.Icon + "\" alt=\"\" />";
                 neededItems += "</div>";
                 neededItems += " </div>";
@@ -78,7 +78,9 @@ function processForSaleResults(forsaleArray, sourceDiv) {
 function ProcessResults(data) {
     var obj = JSON.parse(data);
 
-    var expiryDate = "<a id=\"emblems\" class=\"js-tab-heading\">Emblems</a><span data-date=\"2017-06-27T08:00:00Z\" role=\"timer\" class=\"countdown js-countdown\"><span class=\"countdown__title\">Next reset</span><span class=\"countdown__units js-countdown-units\">27 Jun 2017</span></span>";
+    //alert(obj.Emblems.NextResetFormat);
+    // var expiryDate = "<a id=\"emblems\" class=\"js-tab-heading\">Emblems</a><span data-date=\"2018-06-27T08:00:00Z\" role=\"timer\" class=\"countdown js-countdown\"><span class=\"countdown__title\">Next reset</span><span class=\"countdown__units js-countdown-units\">27 Jun 2017</span></span>";
+    var expiryDate = "<a id=\"emblems\" class=\"js-tab-heading\">Emblems</a><span data-date=\"" + obj.Emblems.NextResetFormat + "\" role=\"timer\" class=\"countdown js-countdown\"><span class=\"countdown__title\">Next reset</span><span class=\"countdown__units js-countdown-units\">27 Jun 2017</span></span>";
     $('#emblemH1').html(expiryDate);
 
     if (obj.Emblems.ForSale.length > 0) {
@@ -94,14 +96,14 @@ function ProcessResults(data) {
             neededEmblems += "<div class=\"grid items__content js-toggle-content\">";
             $.each(faction.Items, function (index, item) {
                 neededEmblems += "<div class=\"grid__item fablet-one-half tablet-one-third\">";
-                neededEmblems += "<div style=\"background-image: url(https://www.bungie.net" + item.SecondaryIcon + ")\" class=\"item\">";
+                neededEmblems += "<div style=\"background-image: url(https://www.bungie.net" + item.SecondaryIcon + ")\" class=\"item" + (item.Obtainable ? "" : " item--unobtainable") + "\">";
                 neededEmblems += "<div class=\"grid grid--middled\">";
                 neededEmblems += "<div class=\"grid__item auto\">";
                 neededEmblems += "<div class=\"item__image\">";
                 neededEmblems += "<img src=\"https://www.bungie.net" + item.Icon + "\" alt=\"\" />";
                 neededEmblems += "</div>";
                 neededEmblems += " </div>";
-                neededEmblems += "<div class=\"grid__item one-half\"><div class=\"item__title\">" + item.Name + "</div></div>";
+                neededEmblems += "<div class=\"grid__item one-half\"><div class=\"item__title\"" + (item.Obtainable ? "" : " data-tooltip=\"No longer obtainable\"") + ">" + item.Name + "</div></div>";
                 neededEmblems += " </div>";
                 neededEmblems += " </div>";
                 neededEmblems += " </div>";
@@ -126,9 +128,7 @@ function ProcessResults(data) {
             factionDiv += "<div class=\"grid items__content js-toggle-content\">";
             $.each(faction.Items, function(index, item) {
                 factionDiv += "<div class=\"grid__item fablet-one-half tablet-one-third\">";
-                factionDiv += "<div style=\"background-image: url(https://www.bungie.net" +
-                    item.SecondaryIcon +
-                    ")\" class=\"item\" data-id=\"";
+                factionDiv += "<div style=\"background-image: url(https://www.bungie.net" + item.SecondaryIcon + ")\" class=\"item" + (item.Obtainable ? "" : " item--unobtainable") + "\" data-id=\"";
                 factionDiv += item.Hash;
                 factionDiv += "\">";
                 factionDiv += "<div class=\"grid grid--middled\">";
@@ -157,22 +157,22 @@ function ProcessResults(data) {
     }
 
     // Shaders
-    var shaderExpiryDate = "<a id=\"shaders\" class=\"js-tab-heading\">Shaders</a><span data-date=\"2017-06-27T08:00:00Z\" role=\"timer\" class=\"countdown js-countdown\"><span class=\"countdown__title\">Next reset</span><span class=\"countdown__units js-countdown-units\">27 Jun 2017</span></span>";
+    var shaderExpiryDate = "<a id=\"shaders\" class=\"js-tab-heading\">Shaders</a><span data-date=\"" + obj.Shaders.NextResetFormat + "\" role=\"timer\" class=\"countdown js-countdown\"><span class=\"countdown__title\">Next reset</span><span class=\"countdown__units js-countdown-units\">27 Jun 2017</span></span>";
     $('#shadersH1').html(shaderExpiryDate);
     processForSaleResults(obj.Shaders.ForSale, "shadersForSale");
     processNeededResults(obj.Shaders.Needed, "shadersMissing");
 
     // Sparrows
-    var sparrowsExpiryDate = "<a id=\"sparrows\" class=\"js-tab-heading\">Sparrows</a><span data-date=\"2017-06-27T08:00:00Z\" role=\"timer\" class=\"countdown js-countdown\"><span class=\"countdown__title\">Next reset</span><span class=\"countdown__units js-countdown-units\">27 Jun 2017</span></span>";
+    var sparrowsExpiryDate = "<a id=\"sparrows\" class=\"js-tab-heading\">Sparrows</a><span data-date=\"" + obj.Sparrows.NextResetFormat + "\" role=\"timer\" class=\"countdown js-countdown\"><span class=\"countdown__title\">Next reset</span><span class=\"countdown__units js-countdown-units\">27 Jun 2017</span></span>";
     $('#sparrowsH1').html(sparrowsExpiryDate);
     processForSaleResults(obj.Sparrows.ForSale, "sparrowsForSale");
     processNeededResults(obj.Sparrows.Needed, "sparrowsMissing");
 
     // Ships
-    var shipsExpiryDate = "<a id=\"ships\" class=\"js-tab-heading\">Ships</a><span data-date=\"2017-06-27T08:00:00Z\" role=\"timer\" class=\"countdown js-countdown\"><span class=\"countdown__title\">Next reset</span><span class=\"countdown__units js-countdown-units\">27 Jun 2017</span></span>";
+    var shipsExpiryDate = "<a id=\"ships\" class=\"js-tab-heading\">Ships</a><span data-date=\"" + obj.Ships.NextResetFormat + "\" role=\"timer\" class=\"countdown js-countdown\"><span class=\"countdown__title\">Next reset</span><span class=\"countdown__units js-countdown-units\">27 Jun 2017</span></span>";
     $('#shipsH1').html(shipsExpiryDate);
     processForSaleResults(obj.Ships.ForSale, "shipsForSale");
     processNeededResults(obj.Ships.Needed, "shipsMissing");
 
-    $('.loading').hide();
+    $('.loading').hide();    
 }

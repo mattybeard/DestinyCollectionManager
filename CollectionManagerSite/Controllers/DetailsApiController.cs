@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Mvc;
+using BungieDatabaseClient;
 using BungieWebClient;
 using BungieWebClient.Model.Advisors;
 using BungieWebClient.Model.InventoryItem;
@@ -27,6 +28,22 @@ namespace CollectionManagerSite.Controllers
         private static AdvisorsEndpoint CrucibleQuartermasterCache { get; set; }
         private static AdvisorsEndpoint IronLordCache { get; set; }
         private static DateTime CacheExpiry { get; set; }
+        private static DateTime NextReset
+        {
+            get
+            {
+                var nextDate = DateTime.MaxValue;
+                nextDate = CheckEarlierDate(EvaCache, nextDate);
+                nextDate = CheckEarlierDate(AmandaCache, nextDate);
+                nextDate = CheckEarlierDate(PetraCache, nextDate);
+                nextDate = CheckEarlierDate(VanguardQuartermasterCache, nextDate);
+                nextDate = CheckEarlierDate(CrucibleQuartermasterCache, nextDate);
+                nextDate = CheckEarlierDate(IronLordCache, nextDate);
+
+                return nextDate;
+            }
+        }
+
         private bool CacheExpired
         {
             get
@@ -44,6 +61,14 @@ namespace CollectionManagerSite.Controllers
             }
         }
         public BungieClient WebClient { get; set; }
+
+        private static DateTime CheckEarlierDate(AdvisorsEndpoint cache, DateTime nextDate)
+        {
+            if (cache != null && cache.Response.data.vendor.nextRefreshDate < nextDate)
+                nextDate = cache.Response.data.vendor.nextRefreshDate;
+
+            return nextDate;
+        }
         public string GetCollectionStatus(int id, string type)
         {
             var consoleChoice = id;
@@ -66,17 +91,25 @@ namespace CollectionManagerSite.Controllers
 
             var resultsToGet = new[] {"Shaders", "Emblems","Sparrows","Ships"};
             var temporaryResults = new ConcurrentBag<TypeResults>();
-            if (!string.IsNullOrEmpty(type))
+            if (!string.IsNullOrEmpty(type) && !type.Equals("All", StringComparison.OrdinalIgnoreCase))
             {
-                temporaryResults.Add(CalculateItemResults(type, characterIds, consoleChoice));
+                var typeResults = CalculateItemResults(type, characterIds, consoleChoice);
+                typeResults.NextReset = NextReset;
+
+                temporaryResults.Add(typeResults);
             }
             else
             {
                 Parallel.ForEach(resultsToGet, t =>
                 {
-                    temporaryResults.Add(CalculateItemResults(t, characterIds, consoleChoice));
+                    var typeResults = CalculateItemResults(t, characterIds, consoleChoice);
+                    typeResults.NextReset = NextReset;
+
+                    temporaryResults.Add(typeResults);
                 });
             }
+
+            // GetAdditionalDetails(temporaryResults);
 
             var results = new CompleteTypeResults()
             {
@@ -154,7 +187,7 @@ namespace CollectionManagerSite.Controllers
 
             foreach (var character in characterIds)
             {
-                var itemsCollection = WebClient.RunGetAsync<VendorPlatformResponse>($"Platform/Destiny/{membershipType}/MyAccount/Character/{character}/Vendor/{vendorId}/");
+                var itemsCollection = WebClient.RunGetAsync<VendorPlatformResponse>($"D1/Platform/Destiny/{membershipType}/MyAccount/Character/{character}/Vendor/{vendorId}/");
                 if (itemsCollection.ErrorCode > 1)
                     throw new InvalidOperationException($"Problem getting your {type}s.");
 
@@ -179,11 +212,9 @@ namespace CollectionManagerSite.Controllers
                         }
 
                     }
-                    //else
-                    //{
+
                     var unlocked = category.saleItems.Where(i => !i.failureIndexes.Any() && (!i.unlockStatuses.Any() || i.unlockStatuses.All(s => s.isSet))).Select(i => i.item.itemHash);
                     itemsNeeded[category.categoryTitle].RemoveAll(i => unlocked.Contains(i.item.itemHash));
-                    //}
 
                     if (itemsNeeded.ContainsKey("Promotional"))
                     {
@@ -203,7 +234,7 @@ namespace CollectionManagerSite.Controllers
                     Parallel.ForEach(group.Value, item =>
                     {
 
-                        var inventoryItem = WebClient.RunGetAsync<InventoryItemPlatformResponse>($"/Platform/Destiny/Manifest/InventoryItem/{item.item.itemHash}/");
+                        var inventoryItem = WebClient.RunGetAsync<InventoryItemPlatformResponse>($"D1/Platform/Destiny/Manifest/InventoryItem/{item.item.itemHash}/");
                         var result = new MissingItemModel()
                         {
                             Type = type,
@@ -226,7 +257,7 @@ namespace CollectionManagerSite.Controllers
 
         private AdvisorsEndpoint GetVendorMetadata(long vendorId)
         {
-            var vendorDetails = WebClient.RunGetAsync<AdvisorsEndpoint>($"Platform/Destiny/Vendors/{vendorId}/Metadata/");
+            var vendorDetails = WebClient.RunGetAsync<AdvisorsEndpoint>($"D1/Platform/Destiny/Vendors/{vendorId}/Metadata/");
 
             return vendorDetails;
         }
@@ -340,6 +371,26 @@ namespace CollectionManagerSite.Controllers
                 salesItems.Add(saleItem);
             }
             return salesItems;
+        }
+
+        private void GetAdditionalDetails(IEnumerable<TypeResults> results)
+        {
+            var db = new DestinyDailyEntities();
+            foreach (var grouping in results)
+            {
+                foreach (var faction in grouping.Needed)
+                {
+                    foreach (var item in faction.Items)
+                    {
+                        var matchingItem = db.GuardianOutfitterItemInformations.FirstOrDefault(go => go.id == item.Hash);
+
+                        if (matchingItem != null && matchingItem.obtainable.HasValue)
+                            item.Obtainable = matchingItem.obtainable.Value;
+                        else
+                            item.Obtainable = true;
+                    }
+                }
+            }
         }
     }
 }

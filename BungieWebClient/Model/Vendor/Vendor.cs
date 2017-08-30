@@ -27,7 +27,7 @@ namespace BungieWebClient.Model.Vendor
     public class VendorData
     {
         //public long vendorHash { get; set; }
-        //public string nextRefreshDate { get; set; }
+        public string nextRefreshDate { get; set; }
         //public bool enabled { get; set; }
         public List<SaleItemCategory> saleItemCategories { get; set; }
         //public List<object> inventoryBuckets { get; set; }

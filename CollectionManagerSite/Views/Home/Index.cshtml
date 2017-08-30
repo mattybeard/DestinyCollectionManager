@@ -27,15 +27,6 @@
     </div>
 </div>
 
-<div class="content-center--centered">
-    <div class="prose">
-        <h1>Preparing for Destiny 2</h1>
-        <p>We have now decided to keep the Destiny Guardian Outfitter online whilst we prepare for Destiny 2.</p>
-        <p>If you are reading this message, we currently DO NOT support Destiny 2 but will as soon as we can.</p>
-    </div>
-</div>
-
-
  <!-- Start: Emblems-->
 <section class="tab js-tab">
     <div class="prose">
@@ -90,7 +81,7 @@
 <!-- Start: Ships-->
 <section class="tab js-tab">
     <div class="prose">
-        <h1 id="shipsH1">>
+        <h1 id="shipsH1">
             <a id="ships" class="js-tab-heading">Ships</a>
         </h1>
     </div>
@@ -115,7 +106,7 @@
 <!-- Start: Sparrows-->
 <section class="tab js-tab">
     <div class="prose">
-        <h1 id="sparrowsH1">>
+        <h1 id="sparrowsH1">
             <a id="sparrows" class="js-tab-heading">Sparrows</a>
         </h1>
     </div>
@@ -144,24 +135,24 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        $('.js-tab-button').click(getDetails);
+        $('#switcher').click(getDetails);
         getDetails();
     });
 
     var getDetails = function () {
 
         var type = $('#switcher').find('.is-active').html() || "Emblems";
-
-        // alert(type);
-
         $('.loading').show();
-
         $.ajax({
-            url: '../api/Details/GetCollectionStatus/@ViewBag.Console?type=' + type,
+            // url: '../api/Details/GetCollectionStatus/@ViewBag.Console?type=' + type,
+            url: '../api/Details/GetCollectionStatus/@ViewBag.Console?type=All',
             type: 'GET',
             cache: false,
             success: function(data) {
                 ProcessResults(data);
+                $(window).trigger('initTabs');
+                $(window).trigger('initToggles');
+                $(window).trigger('initCountdowns');
             }
         });
     };
