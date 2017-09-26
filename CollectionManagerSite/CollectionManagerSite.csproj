@@ -183,6 +183,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="manifest.json" />
+    <Content Include="Areas\D1\Views\web.config" />
+    <Content Include="Areas\D1\Views\Authentication\ConfirmAuth.cshtml" />
+    <Content Include="Areas\D1\Views\Authentication\Index.cshtml" />
+    <Content Include="Areas\D1\Views\Home\Complete.cshtml" />
+    <Content Include="Areas\D1\Views\Home\Error.cshtml" />
+    <Content Include="Areas\D1\Views\Home\Index.cshtml" />
+    <Content Include="Areas\D1\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\D1\Views\Shared\Maintenance.cshtml" />
+    <Content Include="Areas\D1\Views\_ViewStart.cshtml" />
     <None Include="Properties\PublishProfiles\DestinyCollectionManager - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\DestinyCollectionManager - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\GuardianOutfitterDev - FTP.pubxml" />
@@ -197,8 +206,9 @@
     <Content Include="Views\Authentication\ConfirmAuth.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Web.config" />
+    <Content Include="Views\Authentication\LogIn.cshtml" />
     <None Include="Web.Base.config">
-      <DependentUpon>Web.config</DependentUpon> 
+      <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -212,12 +222,23 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\D1\Controllers\AuthenticationController.cs" />
+    <Compile Include="Areas\D1\Controllers\DetailsApiController.cs" />
+    <Compile Include="Areas\D1\Controllers\HomeController.cs" />
+    <Compile Include="Areas\D1\D1AreaRegistration.cs" />
+    <Compile Include="Areas\D1\Models\CompleteTypeResults.cs" />
+    <Compile Include="Areas\D1\Models\FactionDetails.cs" />
+    <Compile Include="Areas\D1\Models\MissingItemModel.cs" />
+    <Compile Include="Areas\D1\Models\TypeResults.cs" />
     <Compile Include="Controllers\AuthenticationController.cs" />
     <Compile Include="Controllers\DetailsApiController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Authentication\SHA1.cs" />
+    <Compile Include="Models\Authentication\User.cs" />
+    <Compile Include="Models\CompleteResults.cs" />
     <Compile Include="Models\CompleteTypeResults.cs" />
     <Compile Include="Models\FactionDetails.cs" />
     <Compile Include="Models\TypeResults.cs" />

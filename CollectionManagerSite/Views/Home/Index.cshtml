@@ -1,8 +1,12 @@
-﻿@model CollectionManagerSite.Models.CompleteTypeResults
+﻿@model CollectionManagerSite.Models.CompleteResults
 @{
     ViewBag.Title = "Guardian Outfitter | Missing Shaders, Emblems, Ships & Sparrows";
 }
 
+<div class="prose">
+    <p>Logged in at @Model.Info.username viewing @Model.GamingUsername (@Model.Console)</p>
+   @Html.ActionLink("Sign Out", "Logout", "Authentication")
+</div>
 
 <div id="navigation" role="navigation" aria-label="Primary navigation" class="grid button-tabs--top">
     <!-- Start: Platform switcher-->
@@ -34,75 +38,58 @@
             <a id="emblems" class="js-tab-heading">Emblems</a>
         </h1>
     </div>
-    <div id="emblemsForSale"></div>
-    <div id="emblemsMissing"></div>
-
-    <div class="loading">
+    <div id="allEmblems">
         <div class="prose">
-            <h2><span>Guardian Outfitter</span></h2>
+            <h2><span>Emblems</span></h2>
         </div>
-        <div style="width: 100%; align-content: center; height: 100px;">
-            <img src="~/Assets/img/meta/hourglass.svg" style="align-content: center; height: 50px; width: 100%">
-            <p style="align-content: center; height: 50px; width: 100%; text-align: center;">Calculating your collection - please hold on...</p>
+
+        <div class="items js-toggle">
+            <div class="prose">
+                <h3 class="items__control js-toggle-control is-active">Obtained</h3>
+            </div>
+            <div class="grid items__content js-toggle-content">
+                
+            </div>
+        </div>
+
+        <div class="items js-toggle">
+            <div class="prose">
+                <h3 class="items__control js-toggle-control is-active">Still Missing</h3>
+            </div>
+            <div class="grid items__content js-toggle-content">
+            @foreach (var emblem in Model.Emblems)
+            {
+                <div class="grid__item fablet-one-half tablet-one-third">
+                    @{
+                        var smallLink = $"https://www.bungie.net/{emblem.icon}";
+                        var bgLink = $"https://www.bungie.net/{emblem.secondaryIcon}";
+                    }
+                    <div style="background-image: url('@bgLink')" class="item" data-id="1234">
+                        <div class="grid grid--middled">
+                            <div class="grid__item auto">
+                                <div class="item__image">
+                                    <img src="@smallLink" alt=""/>
+                                </div>
+                            </div>
+                            <div class="grid__item one-half">
+                                <div class="item__title">
+                                    @emblem.name
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
         </div>
     </div>
         
     <div class="advert js-advert">
         <div class="content-center content-center--gutter"><ins data-ad-client="ca-pub-5655051109573002" data-ad-slot="2916154772" data-ad-format="auto" class="adsbygoogle"></ins></div>
     </div>
-</section>    
+</section>
 
 <!-- End: Emblems-->
-<!-- Start: Shaders-->
-<section class="tab js-tab">
-    <div class="prose">
-        <h1 id="shadersH1">
-            <a id="shaders" class="js-tab-heading">Shaders</a>
-        </h1>
-    </div>
-    <div id="shadersForSale"></div>
-    <div id="shadersMissing"></div>
-
-    <div class="loading">
-        <div class="prose">
-            <h2><span>Guardian Outfitter</span></h2>
-        </div>
-        <div style="width: 100%; align-content: center; height: 100px;">
-            <img src="~/Assets/img/meta/hourglass.svg" style="align-content: center; height: 50px; width: 100%">
-            <p style="align-content: center; height: 50px; width: 100%; text-align: center;">Calculating your collection - please hold on...</p>
-        </div>
-    </div>
-        <div class="advert js-advert">
-            <div class="content-center content-center--gutter"><ins data-ad-client="ca-pub-5655051109573002" data-ad-slot="2916154772" data-ad-format="auto" class="adsbygoogle"></ins></div>
-        </div>
-</section>
-
-<!-- End: Shaders-->
-<!-- Start: Ships-->
-<section class="tab js-tab">
-    <div class="prose">
-        <h1 id="shipsH1">
-            <a id="ships" class="js-tab-heading">Ships</a>
-        </h1>
-    </div>
-    <div id="shipsForSale"></div>
-    <div id="shipsMissing"></div>
-
-    <div class="loading">
-        <div class="prose">
-            <h2><span>Guardian Outfitter</span></h2>
-        </div>
-        <div style="width: 100%; align-content: center; height: 100px;">
-            <img src="~/Assets/img/meta/hourglass.svg" style="align-content: center; height: 50px; width: 100%">
-            <p style="align-content: center; height: 50px; width: 100%; text-align: center;">Calculating your collection - please hold on...</p>
-        </div>
-    </div>
-
-    <div class="advert js-advert">
-        <div class="content-center content-center--gutter"><ins data-ad-client="ca-pub-5655051109573002" data-ad-slot="2916154772" data-ad-format="auto" class="adsbygoogle"></ins></div>
-    </div>
-</section>
-<!-- End: Shaders-->
 <!-- Start: Sparrows-->
 <section class="tab js-tab">
     <div class="prose">
@@ -110,53 +97,93 @@
             <a id="sparrows" class="js-tab-heading">Sparrows</a>
         </h1>
     </div>
-    <div id="sparrowsForSale"></div>
-    <div id="sparrowsMissing"></div>
-
-    <div class="loading">
+    <div id="allSparrows">
         <div class="prose">
-            <h2><span>Guardian Outfitter</span></h2>
+            <h2><span>Sparrows</span></h2>
         </div>
-        <div style="width: 100%; align-content: center; height: 100px;">
-            <img src="~/Assets/img/meta/hourglass.svg" style="align-content: center; height: 50px; width: 100%">
-            <p style="align-content: center; height: 50px; width: 100%; text-align: center;">Calculating your collection - please hold on...</p>
+        <div class="items">
+            <div class="prose">
+                <h3 class="items__control js-toggle-control">Still Needed</h3>
+            </div>
+            <div class="grid items__content js-toggle-content">
+                @foreach (var sparrow in Model.Sparrows)
+                {
+                    <div class="grid__item fablet-one-half tablet-one-third">
+                        <div class="item">
+                            <div class="grid grid--middled">
+                                <div class="grid__item auto">
+                                    <div class="item__image">
+                                        <img src="@($"https://www.bungie.net{sparrow.icon}")" alt="" />
+                                    </div>
+                                </div>
+                                <div class="grid__item one-half">
+                                    <div class="item__title">
+                                        @sparrow.name
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
     </div>
+
     <div class="advert js-advert">
-        <div class="content-center content-center--gutter"><ins data-ad-client="ca-pub-5655051109573002" data-ad-slot="2916154772" data-ad-format="auto" class="adsbygoogle"></ins>
+        <div class="content-center content-center--gutter">
+            <ins data-ad-client="ca-pub-5655051109573002" data-ad-slot="2916154772" data-ad-format="auto" class="adsbygoogle"></ins>
         </div>
-    </div>
-    <div id="#results">
-        
     </div>
 </section>
 <!-- End: Sparrows-->
+<!-- Start: Ships-->
+<section class="tab js-tab">
+    <div class="prose">
+        <h1 id="shipsH1">
+            <a id="ships" class="js-tab-heading">Ships</a>
+        </h1>
+    </div>
+    <div id="allShips">
+        <div class="prose">
+            <h2><span>Ships</span></h2>
+        </div>
+        <div class="items">
+            <div class="prose">
+                <h3 class="items__control js-toggle-control">Still Needed</h3>
+            </div>
+            <div class="grid items__content js-toggle-content">
+                @foreach (var ship in Model.Ships)
+                {
+                    <div class="grid__item fablet-one-half tablet-one-third">
+                        <div class="item">
+                            <div class="grid grid--middled">
+                                <div class="grid__item auto">
+                                    <div class="item__image">
+                                        <img src="@($"https://www.bungie.net{ship.icon}")" alt="" />
+                                    </div>
+                                </div>
+                                <div class="grid__item one-half">
+                                    <div class="item__title">
+                                        @ship.name
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="advert js-advert">
+        <div class="content-center content-center--gutter">
+            <ins data-ad-client="ca-pub-5655051109573002" data-ad-slot="2916154772" data-ad-format="auto" class="adsbygoogle"></ins>
+        </div>
+    </div>
+</section>
+<!-- End: Sparrows-->
+
 <div class="button-tabs button-tabs--bottom js-tab-controls"></div>
-
-<script type="text/javascript">
-    $(document).ready(function () {
-        $('#switcher').click(getDetails);
-        getDetails();
-    });
-
-    var getDetails = function () {
-
-        var type = $('#switcher').find('.is-active').html() || "Emblems";
-        $('.loading').show();
-        $.ajax({
-            // url: '../api/Details/GetCollectionStatus/@ViewBag.Console?type=' + type,
-            url: '../api/Details/GetCollectionStatus/@ViewBag.Console?type=All',
-            type: 'GET',
-            cache: false,
-            success: function(data) {
-                ProcessResults(data);
-                $(window).trigger('initTabs');
-                $(window).trigger('initToggles');
-                $(window).trigger('initCountdowns');
-            }
-        });
-    };
-</script>
 
 
 

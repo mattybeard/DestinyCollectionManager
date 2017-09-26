@@ -7,16 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BungieDatabaseClient
+namespace BungieDatabaseClient.D2
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class GuardianOutfitterItemInformation
+    public partial class InventorySparrow
     {
         public long id { get; set; }
         public string name { get; set; }
-        public Nullable<bool> obtainable { get; set; }
-        public string how_to { get; set; }
+        public string description { get; set; }
+        public string icon { get; set; }
+        public string screenshot { get; set; }
+        public string rarity { get; set; }
     }
 }

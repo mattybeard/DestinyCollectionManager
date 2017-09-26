@@ -2,34 +2,41 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Mvc;
 using BungieDatabaseClient.D1;
-//using BungieDatabaseClient;
-//using BungieDatabaseClient.D1;
-using BungieDatabaseClient.D2;
 using BungieWebClient;
 using BungieWebClient.Model.Advisors;
 using BungieWebClient.Model.InventoryItem;
 using BungieWebClient.Model.Vendor;
-using CollectionManagerSite.Models;
+using CollectionManagerSite.Areas.D1.Models;
 using Newtonsoft.Json;
 using Item = BungieWebClient.Model.Character.Item;
 using SaleItem = BungieWebClient.Model.Vendor.SaleItem;
 
-namespace CollectionManagerSite.Controllers
+namespace CollectionManagerSite.Areas.D1.Controllers
 {
-    public class DetailsController : ApiController
+    public class Details2Controller : ApiController
     {
+        private static AdvisorsEndpoint EvaCache { get; set; }
+        private static AdvisorsEndpoint AmandaCache { get; set; }
+        private static AdvisorsEndpoint PetraCache { get; set; }
+        private static AdvisorsEndpoint VanguardQuartermasterCache { get; set; }
+        private static AdvisorsEndpoint CrucibleQuartermasterCache { get; set; }
+        private static AdvisorsEndpoint IronLordCache { get; set; }
         private static DateTime CacheExpiry { get; set; }
         private static DateTime NextReset
         {
             get
             {
                 var nextDate = DateTime.MaxValue;
+                nextDate = CheckEarlierDate(EvaCache, nextDate);
+                nextDate = CheckEarlierDate(AmandaCache, nextDate);
+                nextDate = CheckEarlierDate(PetraCache, nextDate);
+                nextDate = CheckEarlierDate(VanguardQuartermasterCache, nextDate);
+                nextDate = CheckEarlierDate(CrucibleQuartermasterCache, nextDate);
+                nextDate = CheckEarlierDate(IronLordCache, nextDate);
+
                 return nextDate;
             }
         }
@@ -38,6 +45,9 @@ namespace CollectionManagerSite.Controllers
         {
             get
             {
+                if (EvaCache == null || AmandaCache == null || PetraCache == null || VanguardQuartermasterCache == null || CrucibleQuartermasterCache == null)
+                    return true;
+
                 if (CacheExpiry < DateTime.Now)
                     return true;
 
@@ -49,6 +59,13 @@ namespace CollectionManagerSite.Controllers
         }
         public BungieClient WebClient { get; set; }
 
+        private static DateTime CheckEarlierDate(AdvisorsEndpoint cache, DateTime nextDate)
+        {
+            if (cache != null && cache.Response.data.vendor.nextRefreshDate < nextDate)
+                nextDate = cache.Response.data.vendor.nextRefreshDate;
+
+            return nextDate;
+        }
         public string GetCollectionStatus(int id, string type)
         {
             var consoleChoice = id;
@@ -59,78 +76,98 @@ namespace CollectionManagerSite.Controllers
 
             var characterIds = consoleChoice == 1 ? WebClient.XboxCharacterIds : WebClient.PsCharacterIds;
 
-            //TestD2Api();
+             TestD2Api();
             if (CacheExpired)
-                CacheExpiry = DateTime.Now.AddMinutes(30);
-
-            var allEmblems = GetPossibleEmblems();
-            //GetAlreadyGottenEmblems(characterIds, consoleChoice);
-
-
-
-            //var resultsToGet = new[] {"Emblems"};
-            //var temporaryResults = new ConcurrentBag<TypeResults>();
-            //if (!string.IsNullOrEmpty(type) && !type.Equals("All", StringComparison.OrdinalIgnoreCase))
-            //{
-            //    var typeResults = CalculateItemResults(type, characterIds, consoleChoice);
-            //    typeResults.NextReset = NextReset;
-
-            //    temporaryResults.Add(typeResults);
-            //}
-            //else
-            //{
-            //    Parallel.ForEach(resultsToGet, t =>
-            //    {
-            //        var typeResults = CalculateItemResults(t, characterIds, consoleChoice);
-            //        typeResults.NextReset = NextReset;
-
-            //        temporaryResults.Add(typeResults);
-            //    });
-            //}
-
-            //// GetAdditionalDetails(temporaryResults);
-
-            //var results = new CompleteTypeResults()
-            //{
-            //    Emblems = temporaryResults.FirstOrDefault(t => t.ItemType == "Emblems") ?? new TypeResults(),
-            //    Shaders = temporaryResults.FirstOrDefault(t => t.ItemType == "Shaders") ?? new TypeResults(),
-            //    ShadersExpiryDate = EvaCache.Response.data.vendor.nextRefreshDate,
-            //    Sparrows = temporaryResults.FirstOrDefault(t => t.ItemType == "Sparrows") ?? new TypeResults(),
-            //    Ships = temporaryResults.FirstOrDefault(t => t.ItemType == "Ships") ?? new TypeResults()
-            //};
-
-            return JsonConvert.SerializeObject(allEmblems);
-        }
-
-        private void GetAlreadyGottenEmblems(string[] characterIds, int consoleChoice)
-        {
-            foreach (var characterId in characterIds)
             {
-                var vendorDetails = WebClient.RunGetAsync<AdvisorsEndpoint>($"Platform/Destiny2/{consoleChoice}/Profile/{characterId}/?components=Kiosks");
+                EvaCache = GetVendorMetadata(134701236);
+                AmandaCache = GetVendorMetadata(459708109);
+                PetraCache = GetVendorMetadata(1410745145);
+                VanguardQuartermasterCache = GetVendorMetadata(2668878854);
+                CrucibleQuartermasterCache = GetVendorMetadata(3658200622);
+                IronLordCache = GetVendorMetadata(2648860054);
+                CacheExpiry = DateTime.Now.AddMinutes(30);
             }
-        }
 
-        private List<InventoryEmblem> GetPossibleEmblems()
-        {
-            var db = new DestinyDaily2Entities();
-            var possibleEmblems = db.InventoryEmblems.Where(ie => !string.IsNullOrEmpty(ie.icon));
+            var resultsToGet = new[] {"Shaders", "Emblems","Sparrows","Ships"};
+            var temporaryResults = new ConcurrentBag<TypeResults>();
+            if (!string.IsNullOrEmpty(type) && !type.Equals("All", StringComparison.OrdinalIgnoreCase))
+            {
+                var typeResults = CalculateItemResults(type, characterIds, consoleChoice);
+                typeResults.NextReset = NextReset;
 
-            return possibleEmblems.ToList();
+                temporaryResults.Add(typeResults);
+            }
+            else
+            {
+                Parallel.ForEach(resultsToGet, t =>
+                {
+                    var typeResults = CalculateItemResults(t, characterIds, consoleChoice);
+                    typeResults.NextReset = NextReset;
+
+                    temporaryResults.Add(typeResults);
+                });
+            }
+
+            // GetAdditionalDetails(temporaryResults);
+
+            var results = new CompleteTypeResults()
+            {
+                Emblems = temporaryResults.FirstOrDefault(t => t.ItemType == "Emblems") ?? new TypeResults(),
+                Shaders = temporaryResults.FirstOrDefault(t => t.ItemType == "Shaders") ?? new TypeResults(),
+                ShadersExpiryDate = EvaCache.Response.data.vendor.nextRefreshDate,
+                Sparrows = temporaryResults.FirstOrDefault(t => t.ItemType == "Sparrows") ?? new TypeResults(),
+                Ships = temporaryResults.FirstOrDefault(t => t.ItemType == "Ships") ?? new TypeResults()
+            };
+
+            return JsonConvert.SerializeObject(results);
         }
 
         private TypeResults CalculateItemResults(string type, string[] characterIds, int consoleChoice)
         {
             var results = new TypeResults() { ItemType = type };
+            if (type == "Shaders")
+            {
+                var shaders = GetVendorItems(characterIds, "Shader", 2420628997, consoleChoice).GroupBy(f => f.Faction).OrderBy(a => a.Key);
+                foreach (var shaderGroup in shaders)
+                    results.Needed.Add(new FactionDetails() { FactionName = shaderGroup.Key, Items = shaderGroup.ToList() });
+
+                results.ForSale.AddRange(GetCurrentlyForSale(EvaCache, results.Needed, "Shaders", "Shaders"));
+                results.ForSale.AddRange(GetCurrentlyForSale(PetraCache, results.Needed, "Queen's Wrath: Rank 2", "Shaders"));
+                results.ForSale.AddRange(GetCurrentlyForSale(PetraCache, results.Needed, "Queen's Wrath: Rank 3", "Shaders"));
+                results.ForSale.AddRange(GetCurrentlyForSale(IronLordCache, results.Needed, "Shaders", "Shaders"));
+            }
+
             if (type == "Emblems")
             {
                 var emblems = GetVendorItems(characterIds, "Emblem", 3301500998, consoleChoice).GroupBy(f => f.Faction).OrderBy(a => a.Key); ;
                 foreach (var emblemGroup in emblems)
                     results.Needed.Add(new FactionDetails() { FactionName = emblemGroup.Key, Items = emblemGroup.ToList() });
 
-                //results.ForSale.AddRange(GetCurrentlyForSale(EvaCache, results.Needed, "Emblems", "Emblems"));
-                //results.ForSale.AddRange(GetCurrentlyForSale(PetraCache, results.Needed, "Queen's Wrath: Rank 1", "Emblems"));
-                //results.ForSale.AddRange(GetCurrentlyForSale(IronLordCache, results.Needed, "Emblems", "Emblems"));
-            }           
+                results.ForSale.AddRange(GetCurrentlyForSale(EvaCache, results.Needed, "Emblems", "Emblems"));
+                results.ForSale.AddRange(GetCurrentlyForSale(PetraCache, results.Needed, "Queen's Wrath: Rank 1", "Emblems"));
+                results.ForSale.AddRange(GetCurrentlyForSale(IronLordCache, results.Needed, "Emblems", "Emblems"));
+            }
+
+            if (type == "Sparrows")
+            {
+                var sparrows = GetVendorItems(characterIds, "Sparrow", 44395194, consoleChoice).GroupBy(f => f.Faction).OrderBy(a => a.Key); ;
+                foreach (var sparrowGroup in sparrows)
+                    results.Needed.Add(new FactionDetails() { FactionName = sparrowGroup.Key, Items = sparrowGroup.ToList() });
+
+                results.ForSale.AddRange(GetCurrentlyForSale(AmandaCache, results.Needed, "Vehicles", "Sparrows"));
+                results.ForSale.AddRange(GetCurrentlyForSale(VanguardQuartermasterCache, results.Needed, "Vehicles", "Sparrows"));
+                results.ForSale.AddRange(GetCurrentlyForSale(CrucibleQuartermasterCache, results.Needed, "Vehicles", "Sparrows"));
+            }
+
+            if (type == "Ships")
+            {
+                var ships = GetVendorItems(characterIds, "Ship", 2244880194, consoleChoice).GroupBy(f => f.Faction).OrderBy(a => a.Key); ;
+                foreach (var shipGroup in ships)
+                    results.Needed.Add(new FactionDetails() {FactionName = shipGroup.Key, Items = shipGroup.ToList()});
+
+                results.ForSale.AddRange(GetCurrentlyForSale(AmandaCache, results.Needed, "Ship Blueprints", "Ships"));
+            }
+
             return results;
         }
 

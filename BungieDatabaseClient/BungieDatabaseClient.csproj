@@ -52,49 +52,93 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BungieDbClient.cs" />
-    <Compile Include="DbEntities.Context.cs">
+    <Compile Include="D1\DbEntities.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>DbEntities.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="DbEntities.cs">
+    <Compile Include="D1\DbEntities.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>DbEntities.tt</DependentUpon>
     </Compile>
-    <Compile Include="DbEntities.Designer.cs">
+    <Compile Include="D1\DbEntities.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>DbEntities.edmx</DependentUpon>
     </Compile>
-    <Compile Include="GuardianOutfitterItemInformation.cs">
+    <Compile Include="D1\GuardianOutfitterItemInformation.cs">
       <DependentUpon>DbEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="D2\Destiny2Entities.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Destiny2Entities.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="D2\Destiny2Entities.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Destiny2Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="D2\Destiny2Entities.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Destiny2Entities.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="D2\InventoryEmblem.cs">
+      <DependentUpon>Destiny2Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="D2\InventoryShip.cs">
+      <DependentUpon>Destiny2Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="D2\InventorySparrow.cs">
+      <DependentUpon>Destiny2Entities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="D2\UserInfo.cs">
+      <DependentUpon>Destiny2Entities.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EntityDeploy Include="DbEntities.edmx">
+    <EntityDeploy Include="D1\DbEntities.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>DbEntities.Designer.cs</LastGenOutput>
     </EntityDeploy>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />
-    <None Include="DbEntities.edmx.diagram">
+    <None Include="D1\DbEntities.edmx.diagram">
       <DependentUpon>DbEntities.edmx</DependentUpon>
+    </None>
+    <EntityDeploy Include="D2\Destiny2Entities.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>Destiny2Entities.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="D2\Destiny2Entities.edmx.diagram">
+      <DependentUpon>Destiny2Entities.edmx</DependentUpon>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DbEntities.Context.tt">
+    <Content Include="D1\DbEntities.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>DbEntities.edmx</DependentUpon>
       <LastGenOutput>DbEntities.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="DbEntities.tt">
+    <Content Include="D1\DbEntities.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>DbEntities.edmx</DependentUpon>
       <LastGenOutput>DbEntities.cs</LastGenOutput>
+    </Content>
+    <Content Include="D2\Destiny2Entities.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Destiny2Entities.edmx</DependentUpon>
+      <LastGenOutput>Destiny2Entities.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="D2\Destiny2Entities.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>Destiny2Entities.edmx</DependentUpon>
+      <LastGenOutput>Destiny2Entities.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>

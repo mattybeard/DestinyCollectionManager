@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BungieDatabaseClient
+namespace BungieDatabaseClient.D1
 {
     using System;
     using System.Data.Entity;
