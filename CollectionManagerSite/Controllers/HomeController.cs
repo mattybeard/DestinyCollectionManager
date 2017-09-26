@@ -18,51 +18,50 @@ namespace CollectionManagerSite.Controllers
 
         public ActionResult Index(int console = 0)
         {
-            if (!Request.IsAuthenticated)
-                return RedirectToAction("Login", "Authentication");
+            var authorised = System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"] != null && System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"] != null;
 
-            if(db == null)
-                db = new DestinyDaily2Entities();
-
-            var cookieName = FormsAuthentication.FormsCookieName;
-            var authCookie = HttpContext.Request.Cookies[cookieName];
-            if (authCookie == null)
-                return RedirectToAction("Login", "Authentication");
-
-            var ticket = FormsAuthentication.Decrypt(authCookie.Value);
-            var user = db.UserInfos.First(u => u.username == ticket.Name);
-
-            var goData = new CompleteResults()
+            if (authorised)
             {
-                Info = user,
-                Emblems = db.InventoryEmblems.Where(ie => !string.IsNullOrEmpty(ie.icon)).ToList(),
-                Sparrows = db.InventorySparrows.Where(ie => !string.IsNullOrEmpty(ie.icon)).ToList(),
-                Ships = db.InventoryShips.Where(ie => !string.IsNullOrEmpty(ie.icon)).ToList()
-            };
+                if (db == null)
+                    db = new DestinyDaily2Entities();
 
-            // Check we can still authorise
-            webClient = new BungieClient(user.BungieAccessToken, user.BungieRefreshToken);
-            var response = webClient.RefreshAccessToken();
-            if(response.ErrorCode != 1 && response.ErrorCode != 2110 && response.ErrorCode != 2106)
-                return RedirectToAction("Index", "Authentication");
+                webClient = new BungieClient(System.Web.HttpContext.Current.Request.Cookies["BungieAccessToken"].Value, System.Web.HttpContext.Current.Request.Cookies["BungieRefreshToken"].Value);
 
-            // Get the details as it's nice to see
-            var gotDetails = webClient.GetUserDetails();
-            if (webClient.MembershipType == -1 || !gotDetails)
-                return RedirectToAction("Index", "Authentication");
+               
 
-            var consoleChoice = console == 0 ? webClient.MembershipType : console;
-            goData.Console = (consoleChoice == 1) ? "Xbox" : "Playstation";
-            goData.GamingUsername = (consoleChoice == 1) ? webClient.XboxAccountName : webClient.PsAccountName;
+                // Check we can still authorise
+                var response = webClient.RefreshAccessToken();
+                if (response.ErrorCode != 1 && response.ErrorCode != 2110 && response.ErrorCode != 2106)
+                    return RedirectToAction("Index", "Authentication");
 
-            ViewBag.Console = consoleChoice;
-            ViewBag.DualConsole = webClient.DualAccount;
+                // Get the details as it's nice to see
+                var gotDetails = webClient.GetUserDetails();
+                if (webClient.MembershipType == -1 || !gotDetails)
+                    return RedirectToAction("Index", "Authentication");
 
-            var vendorDetailsC = webClient.RunGetAsync<string>($"Platform/Destiny2/1/Profile/4611686018431904749/?components=Kiosks");
-            var vendorDetailsP = webClient.RunGetAsync<string>($"Platform/Destiny2/1/Profile/4611686018431904749/Character/2305843009261356818/?components=500");
+                var goData = new CompleteResults()
+                {
+                    //Info = user,
+                    Emblems = db.InventoryEmblems.Where(ie => !string.IsNullOrEmpty(ie.icon)).ToList(),
+                    Sparrows = db.InventorySparrows.Where(ie => !string.IsNullOrEmpty(ie.icon)).ToList(),
+                    Ships = db.InventoryShips.Where(ie => !string.IsNullOrEmpty(ie.icon)).ToList()
+                };
 
-            return View(goData);
-            
+                var consoleChoice = console == 0 ? webClient.MembershipType : console;
+                goData.Console = (consoleChoice == 1) ? "Xbox" : "Playstation";
+                goData.GamingUsername = (consoleChoice == 1) ? webClient.XboxAccountName : webClient.PsAccountName;
+
+                ViewBag.Console = consoleChoice;
+                ViewBag.DualConsole = webClient.DualAccount;
+
+                //var vendorDetailsC = webClient.RunGetAsync<string>($"Platform/Destiny2/1/Profile/4611686018431904749/?components=Kiosks");
+                //var vendorDetailsP = webClient.RunGetAsync<string>($"Platform/Destiny2/1/Profile/4611686018431904749/Character/2305843009261356818/?components=500");
+
+                return View(goData);
+            }
+
+            return RedirectToAction("Index", "Authentication");
+
         }
     }
 }
