@@ -51,6 +51,14 @@
     <Compile Include="Model\Gamertag\GamertagResponse.cs" />
     <Compile Include="Model\InventoryItem\Response.cs" />
     <Compile Include="Model\Membership\Response.cs" />
+    <Compile Include="Model\Plumbing\D2\DisplayProperties.cs" />
+    <Compile Include="Model\Plumbing\D2\ItemList.cs" />
+    <Compile Include="Model\Plumbing\D2\VendorDefinition.cs" />
+    <Compile Include="Model\Vendor\D2\GetProfileKioskItem.cs" />
+    <Compile Include="Model\Vendor\D2\GetProfileKiosks.cs" />
+    <Compile Include="Model\Vendor\D2\GetProfileKiosksData.cs" />
+    <Compile Include="Model\Vendor\D2\GetProfileKiosksProfileKiosks.cs" />
+    <Compile Include="Model\Vendor\D2\GetProfileKiosksResponse.cs" />
     <Compile Include="Model\Vendor\Vendor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities.cs" />

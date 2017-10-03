@@ -22,5 +22,7 @@ namespace BungieDatabaseClient.D2
         public string secondarySpecial { get; set; }
         public string screenshot { get; set; }
         public string rarity { get; set; }
+        public Nullable<bool> obtainable { get; set; }
+        public string howto { get; set; }
     }
 }

@@ -7,5 +7,350 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
     <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAiqxlP2e69kSFIIyorx+rPAAAAAACAAAAAAADZgAAwAAAABAAAACcMhrRH2+0lbjXTlEIz06yAAAAAASAAACgAAAAEAAAAIyal7RnMnl/oH/L5m2EXxuAAAAAG/QpHB6mzhlMNL0cqxWTzGVGySzXrkGiPRFew5W0ep6q+1oDl82sobxSxJxsjAi4uWlLAhTgJKwfpzeRqoVCyQmxeR09P7iplFneIK8ql/khQ+SGE1cT2BuF40WHD90eoczZNPMP/LvZ+/g954dnlL8eLConwuDyYvI+FmdsuwIUAAAAbLnmr3u7J5OsVOEzRTJWyGmQ+jI=</EncryptedPassword>
+    <_PublishTargetUrl>ftp://waws-prod-sn1-057.ftp.azurewebsites.windows.net/site/wwwroot</_PublishTargetUrl>
   </PropertyGroup>
+  <ItemGroup>
+    <File Include="Areas/D1/Views/Authentication/ConfirmAuth.cshtml">
+      <publishTime>09/26/2017 10:48:13</publishTime>
+    </File>
+    <File Include="Areas/D1/Views/Authentication/Index.cshtml">
+      <publishTime>09/26/2017 10:48:13</publishTime>
+    </File>
+    <File Include="Areas/D1/Views/Home/Complete.cshtml">
+      <publishTime>09/26/2017 10:48:13</publishTime>
+    </File>
+    <File Include="Areas/D1/Views/Home/Error.cshtml">
+      <publishTime>09/26/2017 10:48:13</publishTime>
+    </File>
+    <File Include="Areas/D1/Views/Home/Index.cshtml">
+      <publishTime>09/26/2017 10:48:13</publishTime>
+    </File>
+    <File Include="Areas/D1/Views/Shared/Maintenance.cshtml">
+      <publishTime>09/26/2017 10:48:13</publishTime>
+    </File>
+    <File Include="Areas/D1/Views/Shared/_Layout.cshtml">
+      <publishTime>09/26/2017 10:48:13</publishTime>
+    </File>
+    <File Include="Areas/D1/Views/web.config">
+      <publishTime>09/11/2017 11:27:28</publishTime>
+    </File>
+    <File Include="Areas/D1/Views/_ViewStart.cshtml">
+      <publishTime>09/26/2017 10:48:13</publishTime>
+    </File>
+    <File Include="Assets/css/index-ie8.css">
+      <publishTime>09/05/2017 13:35:49</publishTime>
+    </File>
+    <File Include="Assets/css/index.css">
+      <publishTime>09/05/2017 13:35:49</publishTime>
+    </File>
+    <File Include="Assets/font/roboto/regular.ttf">
+      <publishTime>03/09/2017 12:02:46</publishTime>
+    </File>
+    <File Include="Assets/font/roboto/regular.woff">
+      <publishTime>03/09/2017 12:02:46</publishTime>
+    </File>
+    <File Include="Assets/font/roboto/regular.woff2">
+      <publishTime>03/09/2017 12:02:46</publishTime>
+    </File>
+    <File Include="Assets/img/meta/android-chrome-144x144.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/android-chrome-192x192.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/android-chrome-256x256.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/android-chrome-36x36.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/android-chrome-384x384.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/android-chrome-48x48.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/android-chrome-512x512.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/android-chrome-72x72.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/android-chrome-96x96.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/apple-touch-icon-114x114.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/apple-touch-icon-120x120.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/apple-touch-icon-144x144.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/apple-touch-icon-152x152.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/apple-touch-icon-180x180.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/apple-touch-icon-57x57.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/apple-touch-icon-60x60.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/apple-touch-icon-72x72.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/apple-touch-icon-76x76.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/apple-touch-icon.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/favicon-16x16.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/favicon-32x32.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/hourglass.svg">
+      <publishTime>09/05/2017 13:35:49</publishTime>
+    </File>
+    <File Include="Assets/img/meta/meta-icon-1000x1000.jpg">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/meta-icon-1000x1000.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/mstile-144x144.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/mstile-150x150.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/mstile-310x150.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/mstile-310x310.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/mstile-70x70.png">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/meta/safari-pinned-tab.svg">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/img/sprite/generated/icon-sprite.png">
+      <publishTime>07/19/2017 14:28:48</publishTime>
+    </File>
+    <File Include="Assets/img/sprite/generated/icon-sprite.svg">
+      <publishTime>07/19/2017 14:28:50</publishTime>
+    </File>
+    <File Include="Assets/js/build/index.js">
+      <publishTime>09/05/2017 13:35:49</publishTime>
+    </File>
+    <File Include="Assets/js/build/index.js.map">
+      <publishTime>09/05/2017 13:35:49</publishTime>
+    </File>
+    <File Include="Assets/js/build/modernizr.js">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="Assets/js/lib/vendor/html5shiv.js">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="bin/Antlr3.Runtime.dll">
+      <publishTime>01/26/2017 16:01:17</publishTime>
+    </File>
+    <File Include="bin/Assets/js/build/index.js">
+      <publishTime>09/05/2017 13:35:49</publishTime>
+    </File>
+    <File Include="bin/Assets/js/build/index.js.map">
+      <publishTime>09/05/2017 13:35:49</publishTime>
+    </File>
+    <File Include="bin/Assets/js/build/modernizr.js">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="bin/Assets/js/lib/vendor/html5shiv.js">
+      <publishTime>05/23/2017 14:44:28</publishTime>
+    </File>
+    <File Include="bin/BungieDatabaseClient.dll">
+      <publishTime>09/27/2017 16:10:48</publishTime>
+    </File>
+    <File Include="bin/BungieWebClient.dll">
+      <publishTime>10/03/2017 10:11:00</publishTime>
+    </File>
+    <File Include="bin/CollectionManagerSite.dll">
+      <publishTime>10/03/2017 10:11:03</publishTime>
+    </File>
+    <File Include="bin/EntityFramework.dll">
+      <publishTime>11/03/2015 16:43:42</publishTime>
+    </File>
+    <File Include="bin/EntityFramework.SqlServer.dll">
+      <publishTime>11/03/2015 16:43:42</publishTime>
+    </File>
+    <File Include="bin/Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll">
+      <publishTime>06/15/2015 02:06:24</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Web.Infrastructure.dll">
+      <publishTime>04/23/2012 15:23:58</publishTime>
+    </File>
+    <File Include="bin/Newtonsoft.Json.dll">
+      <publishTime>04/02/2017 17:46:32</publishTime>
+    </File>
+    <File Include="bin/roslyn/csc.exe">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.Build.Tasks.CodeAnalysis.dll">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.CSharp.dll">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.dll">
+      <publishTime>06/18/2015 20:19:44</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.VisualBasic.dll">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CSharp.Core.targets">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.VisualBasic.Core.targets">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Collections.Immutable.dll">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Reflection.Metadata.dll">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/vbc.exe">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/VBCSCompiler.exe">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/roslyn/VBCSCompiler.exe.config">
+      <publishTime>06/18/2015 20:19:46</publishTime>
+    </File>
+    <File Include="bin/System.Net.Http.Formatting.dll">
+      <publishTime>01/28/2015 03:02:42</publishTime>
+    </File>
+    <File Include="bin/System.Web.Helpers.dll">
+      <publishTime>01/28/2015 03:04:30</publishTime>
+    </File>
+    <File Include="bin/System.Web.Http.dll">
+      <publishTime>01/28/2015 03:02:54</publishTime>
+    </File>
+    <File Include="bin/System.Web.Http.WebHost.dll">
+      <publishTime>01/28/2015 03:03:46</publishTime>
+    </File>
+    <File Include="bin/System.Web.Mvc.dll">
+      <publishTime>01/28/2015 03:02:18</publishTime>
+    </File>
+    <File Include="bin/System.Web.Optimization.dll">
+      <publishTime>01/26/2017 16:01:17</publishTime>
+    </File>
+    <File Include="bin/System.Web.Razor.dll">
+      <publishTime>01/28/2015 03:02:32</publishTime>
+    </File>
+    <File Include="bin/System.Web.Webpages.Deployment.dll">
+      <publishTime>01/28/2015 03:04:30</publishTime>
+    </File>
+    <File Include="bin/System.Web.Webpages.dll">
+      <publishTime>01/28/2015 03:04:30</publishTime>
+    </File>
+    <File Include="bin/System.Web.Webpages.Razor.dll">
+      <publishTime>01/28/2015 03:04:30</publishTime>
+    </File>
+    <File Include="bin/WebGrease.dll">
+      <publishTime>01/26/2017 16:01:17</publishTime>
+    </File>
+    <File Include="browserconfig.xml">
+      <publishTime>03/14/2017 11:44:12</publishTime>
+    </File>
+    <File Include="favicon.ico">
+      <publishTime>03/14/2017 11:44:12</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.eot">
+      <publishTime>12/15/2016 12:24:05</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.svg">
+      <publishTime>12/15/2016 12:24:05</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.ttf">
+      <publishTime>12/15/2016 12:24:05</publishTime>
+    </File>
+    <File Include="fonts/glyphicons-halflings-regular.woff">
+      <publishTime>12/15/2016 12:24:05</publishTime>
+    </File>
+    <File Include="Global.asax">
+      <publishTime>12/15/2016 12:21:40</publishTime>
+    </File>
+    <File Include="manifest.json">
+      <publishTime>03/14/2017 11:44:12</publishTime>
+    </File>
+    <File Include="packages.config">
+      <publishTime>09/05/2017 13:35:49</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap.js">
+      <publishTime>12/15/2016 12:24:05</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap.min.js">
+      <publishTime>12/15/2016 12:24:05</publishTime>
+    </File>
+    <File Include="Scripts/customJs.js">
+      <publishTime>09/26/2017 12:12:52</publishTime>
+    </File>
+    <File Include="Scripts/jquery-1.10.2.js">
+      <publishTime>12/15/2016 12:24:06</publishTime>
+    </File>
+    <File Include="Scripts/jquery-1.10.2.min.js">
+      <publishTime>12/15/2016 12:24:06</publishTime>
+    </File>
+    <File Include="Scripts/jquery-1.10.2.min.map">
+      <publishTime>12/15/2016 12:24:06</publishTime>
+    </File>
+    <File Include="Scripts/microModernizer.js">
+      <publishTime>01/26/2017 16:01:17</publishTime>
+    </File>
+    <File Include="Scripts/modernizr-2.6.2.js">
+      <publishTime>12/15/2016 12:24:07</publishTime>
+    </File>
+    <File Include="sitemap.xml">
+      <publishTime>03/09/2017 12:02:46</publishTime>
+    </File>
+    <File Include="Views/Authentication/ConfirmAuth.cshtml">
+      <publishTime>12/15/2016 13:44:39</publishTime>
+    </File>
+    <File Include="Views/Authentication/Index.cshtml">
+      <publishTime>10/03/2017 09:24:44</publishTime>
+    </File>
+    <File Include="Views/Home/Complete.cshtml">
+      <publishTime>09/05/2017 13:35:49</publishTime>
+    </File>
+    <File Include="Views/Home/Error.cshtml">
+      <publishTime>09/05/2017 13:35:49</publishTime>
+    </File>
+    <File Include="Views/Home/Index.cshtml">
+      <publishTime>10/03/2017 09:44:05</publishTime>
+    </File>
+    <File Include="Views/Shared/Maintenance.cshtml">
+      <publishTime>09/05/2017 13:35:49</publishTime>
+    </File>
+    <File Include="Views/Shared/_Layout.cshtml">
+      <publishTime>09/05/2017 13:35:49</publishTime>
+    </File>
+    <File Include="Views/web.config">
+      <publishTime>12/15/2016 12:21:40</publishTime>
+    </File>
+    <File Include="Views/_ViewStart.cshtml">
+      <publishTime>12/15/2016 12:24:03</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>10/03/2017 10:11:08</publishTime>
+    </File>
+  </ItemGroup>
 </Project>

@@ -26,7 +26,6 @@ namespace BungieDatabaseClient.D2
         }
     
         public virtual DbSet<InventoryEmblem> InventoryEmblems { get; set; }
-        public virtual DbSet<UserInfo> UserInfos { get; set; }
         public virtual DbSet<InventorySparrow> InventorySparrows { get; set; }
         public virtual DbSet<InventoryShip> InventoryShips { get; set; }
     }

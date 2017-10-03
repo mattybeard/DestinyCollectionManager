@@ -17,6 +17,8 @@
           <Property Name="secondarySpecial" Type="nvarchar" MaxLength="255" />
           <Property Name="screenshot" Type="nvarchar" MaxLength="255" />
           <Property Name="rarity" Type="nvarchar" MaxLength="255" />
+          <Property Name="obtainable" Type="bit" />
+          <Property Name="howto" Type="nvarchar" MaxLength="255" />
         </EntityType>
         <EntityType Name="inventoryship">
           <Key>
@@ -40,24 +42,10 @@
           <Property Name="screenshot" Type="nvarchar" MaxLength="255" />
           <Property Name="rarity" Type="nvarchar" MaxLength="255" />
         </EntityType>
-        <EntityType Name="userinfo">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="username" Type="nvarchar" MaxLength="255" />
-          <Property Name="passwordhash" Type="nvarchar" MaxLength="255" />
-          <Property Name="BungieAccessToken" Type="nvarchar(max)" />
-          <Property Name="BungieRefreshToken" Type="nvarchar(max)" />
-          <Property Name="emailaddress" Type="varchar" MaxLength="255" />
-          <Property Name="AuthorisedUntil" Type="datetime" />
-          <Property Name="LastSeen" Type="datetime" />
-        </EntityType>
         <EntityContainer Name="DestinyDaily2ModelStoreContainer">
           <EntitySet Name="inventoryemblem" EntityType="Self.inventoryemblem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="inventoryship" EntityType="Self.inventoryship" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="inventorysparrow" EntityType="Self.inventorysparrow" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="userinfo" EntityType="Self.userinfo" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -75,26 +63,14 @@
           <Property Name="secondarySpecial" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="screenshot" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="rarity" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="obtainable" Type="Boolean" />
+          <Property Name="howto" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityContainer Name="DestinyDaily2Entities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="InventoryEmblems" EntityType="DestinyDaily2Model.InventoryEmblem" />
-          <EntitySet Name="UserInfos" EntityType="DestinyDaily2Model.UserInfo" />
           <EntitySet Name="InventorySparrows" EntityType="DestinyDaily2Model.InventorySparrow" />
           <EntitySet Name="InventoryShips" EntityType="DestinyDaily2Model.InventoryShip" />
         </EntityContainer>
-        <EntityType Name="UserInfo">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="username" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="passwordhash" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="BungieAccessToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="BungieRefreshToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="emailaddress" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="AuthorisedUntil" Type="DateTime" Precision="3" />
-          <Property Name="LastSeen" Type="DateTime" Precision="3" />
-        </EntityType>
         <EntityType Name="InventorySparrow">
           <Key>
             <PropertyRef Name="id" />
@@ -126,6 +102,8 @@
           <EntitySetMapping Name="InventoryEmblems">
             <EntityTypeMapping TypeName="DestinyDaily2Model.InventoryEmblem">
               <MappingFragment StoreEntitySet="inventoryemblem">
+                <ScalarProperty Name="howto" ColumnName="howto" />
+                <ScalarProperty Name="obtainable" ColumnName="obtainable" />
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="name" ColumnName="name" />
                 <ScalarProperty Name="icon" ColumnName="icon" />
@@ -134,20 +112,6 @@
                 <ScalarProperty Name="secondarySpecial" ColumnName="secondarySpecial" />
                 <ScalarProperty Name="screenshot" ColumnName="screenshot" />
                 <ScalarProperty Name="rarity" ColumnName="rarity" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="UserInfos">
-            <EntityTypeMapping TypeName="DestinyDaily2Model.UserInfo">
-              <MappingFragment StoreEntitySet="userinfo">
-                <ScalarProperty Name="LastSeen" ColumnName="LastSeen" />
-                <ScalarProperty Name="AuthorisedUntil" ColumnName="AuthorisedUntil" />
-                <ScalarProperty Name="emailaddress" ColumnName="emailaddress" />
-                <ScalarProperty Name="BungieRefreshToken" ColumnName="BungieRefreshToken" />
-                <ScalarProperty Name="BungieAccessToken" ColumnName="BungieAccessToken" />
-                <ScalarProperty Name="passwordhash" ColumnName="passwordhash" />
-                <ScalarProperty Name="username" ColumnName="username" />
-                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

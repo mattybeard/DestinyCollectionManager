@@ -1,18 +1,14 @@
-﻿@model CollectionManagerSite.Models.CompleteResults
+﻿@model CollectionManagerSite.Models.CompleteTypeResults
 @{
     ViewBag.Title = "Guardian Outfitter | Missing Shaders, Emblems, Ships & Sparrows";
 }
 
-<div class="prose">
-    <p>Logged in at @Model.Info.username viewing @Model.GamingUsername (@Model.Console)</p>
-   @Html.ActionLink("Sign Out", "Logout", "Authentication")
-</div>
 
 <div id="navigation" role="navigation" aria-label="Primary navigation" class="grid button-tabs--top">
     <!-- Start: Platform switcher-->
     <!-- Hide everything between comments when only one platform is available-->
     <!-- Need to switch `is-disabled` and `is-active` classes between buttons-->
-    @if ((bool)ViewBag.DualConsole)
+    @if ((bool) ViewBag.DualConsole)
     {
         <div class="grid__item auto">
             <div class="button-tabs button-tabs--platform">
@@ -31,7 +27,23 @@
     </div>
 </div>
 
- <!-- Start: Emblems-->
+<div class="prose">
+    <p>There is currently a known issue with emblems that are "redeemed" rather than "earned" such as the collectors edition emblem "Emperor's Shadows" so they are in the bugged section until the issue is resolved.</p>
+    <p>If you feel an emblem is in the wrong section, please reach out to me on Twitter <a href="https://www.twitter.com/destinydaily7" target="_blank">@@DestinyDaily7</a>
+    </p>
+</div>
+
+<div class="prose">
+    <br/>
+    <p>Still to come:</p>
+    <ul>
+        <li>Exotic Armour checklist</li>
+        <li>Exotic Weapon checklist</li>
+        <li>How to obtain guides</li>
+    </ul>
+</div>
+
+<!-- Start: Emblems-->
 <section class="tab js-tab">
     <div class="prose">
         <h1 id="emblemH1">
@@ -45,41 +57,94 @@
 
         <div class="items js-toggle">
             <div class="prose">
-                <h3 class="items__control js-toggle-control is-active">Obtained</h3>
+                <h3 class="items__control js-toggle-control is-active">Still Missing</h3>
             </div>
             <div class="grid items__content js-toggle-content">
-                
+                @foreach (var emblem in Model.NeededEmblems)
+                {
+                    <div class="grid__item fablet-one-half tablet-one-third">
+                        @{
+                            var smallLink = $"https://www.bungie.net/{emblem.icon}";
+                            var bgLink = $"https://www.bungie.net/{emblem.secondaryIcon}";
+                        }
+                        <div style="background-image: url('@bgLink')" class="item" data-id="1234">
+                            <div class="grid grid--middled">
+                                <div class="grid__item auto">
+                                    <div class="item__image">
+                                        <img src="@smallLink" alt="" />
+                                    </div>
+                                </div>
+                                <div class="grid__item one-half">
+                                    <div class="item__title">
+                                        @emblem.name
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                            }
             </div>
         </div>
 
         <div class="items js-toggle">
             <div class="prose">
-                <h3 class="items__control js-toggle-control is-active">Still Missing</h3>
+                <h3 class="items__control js-toggle-control is-active">Obtained</h3>
             </div>
             <div class="grid items__content js-toggle-content">
-            @foreach (var emblem in Model.Emblems)
-            {
-                <div class="grid__item fablet-one-half tablet-one-third">
-                    @{
-                        var smallLink = $"https://www.bungie.net/{emblem.icon}";
-                        var bgLink = $"https://www.bungie.net/{emblem.secondaryIcon}";
-                    }
-                    <div style="background-image: url('@bgLink')" class="item" data-id="1234">
-                        <div class="grid grid--middled">
-                            <div class="grid__item auto">
-                                <div class="item__image">
-                                    <img src="@smallLink" alt=""/>
+                @foreach (var emblem in Model.GotEmblems)
+                {
+                    <div class="grid__item fablet-one-half tablet-one-third">
+                        @{
+                            var smallLink = $"https://www.bungie.net/{emblem.icon}";
+                            var bgLink = $"https://www.bungie.net/{emblem.secondaryIcon}";
+                        }
+                        <div style="background-image: url('@bgLink')" class="item" data-id="1234">
+                            <div class="grid grid--middled">
+                                <div class="grid__item auto">
+                                    <div class="item__image">
+                                        <img src="@smallLink" alt="" />
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="grid__item one-half">
-                                <div class="item__title">
-                                    @emblem.name
+                                <div class="grid__item one-half">
+                                    <div class="item__title">
+                                        @emblem.name
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                }
+                    }
+            </div>
+        </div>
+
+        <div class="items js-toggle">
+            <div class="prose">
+                <h3 class="items__control js-toggle-control is-active">Currently Unobtainable / Bugged</h3>
+            </div>
+            <div class="grid items__content js-toggle-content">
+                @foreach (var emblem in Model.UnobtainableEmblems)
+                    {
+                    <div class="grid__item fablet-one-half tablet-one-third">
+                        @{
+                            var smallLink = $"https://www.bungie.net/{emblem.icon}";
+                            var bgLink = $"https://www.bungie.net/{emblem.secondaryIcon}";
+                        }
+                        <div style="background-image: url('@bgLink')" class="item item--unobtainable" data-id="@emblem.id" data-tooltip="Currently unobtainable">
+                            <div class="grid grid--middled">
+                                <div class="grid__item auto">
+                                    <div class="item__image">
+                                        <img src="@smallLink" alt="" />
+                                    </div>
+                                </div>
+                                <div class="grid__item one-half">
+                                    <div class="item__title">
+                                        @emblem.name
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                            }
             </div>
         </div>
     </div>
@@ -91,7 +156,7 @@
 
 <!-- End: Emblems-->
 <!-- Start: Sparrows-->
-<section class="tab js-tab">
+@*<section class="tab js-tab">
     <div class="prose">
         <h1 id="sparrowsH1">
             <a id="sparrows" class="js-tab-heading">Sparrows</a>
@@ -134,10 +199,10 @@
             <ins data-ad-client="ca-pub-5655051109573002" data-ad-slot="2916154772" data-ad-format="auto" class="adsbygoogle"></ins>
         </div>
     </div>
-</section>
+</section>*@
 <!-- End: Sparrows-->
 <!-- Start: Ships-->
-<section class="tab js-tab">
+@*<section class="tab js-tab">
     <div class="prose">
         <h1 id="shipsH1">
             <a id="ships" class="js-tab-heading">Ships</a>
@@ -180,10 +245,34 @@
             <ins data-ad-client="ca-pub-5655051109573002" data-ad-slot="2916154772" data-ad-format="auto" class="adsbygoogle"></ins>
         </div>
     </div>
-</section>
+</section>*@
 <!-- End: Sparrows-->
 
 <div class="button-tabs button-tabs--bottom js-tab-controls"></div>
+
+@*<script type="text/javascript">
+    $(document).ready(function () {
+        $('#switcher').click(getDetails);
+        getDetails();
+    });
+
+    var getDetails = function () {
+
+        var type = $('#switcher').find('.is-active').html() || "Emblems";
+        $('.loading').show();
+        $.ajax({
+            url: '../api/Details/GetCollectionStatus/@ViewBag.Console?type=All',
+            type: 'GET',
+            cache: false,
+            success: function(data) {
+                ProcessResults(data);
+                $(window).trigger('initTabs');
+                $(window).trigger('initToggles');
+                $(window).trigger('initCountdowns');
+            }
+        });
+    };
+</script>*@
 
 
 

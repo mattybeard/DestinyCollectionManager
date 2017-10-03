@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using BungieDatabaseClient.D2;
 
 namespace CollectionManagerSite.Models
 {
@@ -12,6 +13,9 @@ namespace CollectionManagerSite.Models
         public TypeResults Emblems { get; set; }
         public TypeResults Ships { get; set; }
         public TypeResults Sparrows { get; set; }
+        public List<InventoryEmblem> GotEmblems { get; set; }
+        public List<InventoryEmblem> NeededEmblems { get; set; }
+        public List<InventoryEmblem> UnobtainableEmblems { get; set; }
 
         public CompleteTypeResults()
         {

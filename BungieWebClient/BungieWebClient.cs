@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Cache;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mail;
@@ -13,6 +15,8 @@ using BungieWebClient.Model.Authentication;
 using BungieWebClient.Model.Character;
 using BungieWebClient.Model.Gamertag;
 using BungieWebClient.Model.Membership;
+using BungieWebClient.Model.Vendor.D2;
+using Newtonsoft.Json;
 
 namespace BungieWebClient
 {
@@ -21,12 +25,12 @@ namespace BungieWebClient
         public const string BungieBaseUri = "https://www.bungie.net/";
         public const string AccessTokenRequest = "Platform/App/GetAccessTokensFromCode/";
         public const string RefreshTokenRequest = "Platform/App/GetAccessTokensFromRefreshToken/";
-        public const string AuthenticationCodeRequest = "https://www.bungie.net/en/Application/Authorize/6871";
-        private const string ApiKey = "2aa2b040a1904c97b94550eaaabd54ab";
+        // public const string AuthenticationCodeRequest = "https://www.bungie.net/en/Application/Authorize/6871";
+        // private const string ApiKey = "2aa2b040a1904c97b94550eaaabd54ab";
 
         // live code
-        // public const string AuthenticationCodeRequest = "https://www.bungie.net/en/Application/Authorize/11093";
-        // private const string ApiKey = "9681c0a6c9f44315bef80e15a4e3b469";
+        public const string AuthenticationCodeRequest = "https://www.bungie.net/en/Application/Authorize/11093";
+        private const string ApiKey = "9681c0a6c9f44315bef80e15a4e3b469";
         
         // Public beta
         // public const string AuthenticationCodeRequest = "https://www.bungie.net/en/Application/Authorize/13331";
@@ -42,13 +46,14 @@ namespace BungieWebClient
         public string[] PsCharacterIds;
         
         public int MembershipType;
-        public string MembershipId;
+        public string[] MembershipIds ;
         public bool DualAccount { get; set; }
 
         public BungieClient(string accessToken, string refreshToken) : this()
         {
             _accessToken = accessToken;
             _refreshToken = refreshToken;
+            MembershipIds = new string[3];
         }
         public BungieClient()
         {
@@ -198,9 +203,6 @@ namespace BungieWebClient
                 _accessToken = response.Response.AccessToken.Value;
                 _refreshToken = response.Response.RefreshToken.Value;
             }
-
-            //GetUserDetails();
-
             return response;
         }
 
@@ -219,7 +221,11 @@ namespace BungieWebClient
                     PsCharacterIds = RetrieveCharacterDetails(2, PsAccountName);
 
                 if (XboxCharacterIds != null && XboxCharacterIds.Any())
+                {
+                    var xbActive = true;
+                    
                     MembershipType = 1;
+                }
                 else if (PsCharacterIds != null && PsCharacterIds.Any())
                     MembershipType = 2;
                 else
@@ -230,11 +236,9 @@ namespace BungieWebClient
 
                 return true;
             }
-            else
-            {
-                SendErrorAlert(new Exception($"GetUserDetailsFailed - Error Code:{response?.ErrorCode}      Message:{response?.Message}     Access Token:{_accessToken}     Refresh Token:{_refreshToken}"));
-                return false;
-            }
+
+            SendErrorAlert(new Exception($"GetUserDetailsFailed - Error Code:{response?.ErrorCode}      Message:{response?.Message}     Access Token:{_accessToken}     Refresh Token:{_refreshToken}"));
+            return false;
         }
         
         private string[] RetrieveCharacterDetails(int membershipType, string membershipName)
@@ -247,12 +251,63 @@ namespace BungieWebClient
                 return null;
             }
 
-            MembershipId = membershipId.membershipId;
+            if(MembershipIds == null)
+                MembershipIds = new string[3];
+
+            MembershipIds[membershipType] = membershipId.membershipId;
             MembershipType = membershipId.membershipType;
 
-            var characterDetails = RunGetAsync<CharacterEndpoint>($"Platform/Destiny/{MembershipType}/Account/{membershipId.membershipId}/Summary/");
-            var characterIds = characterDetails?.Response?.data?.characters?.Select(c => c.characterBase.characterId).ToArray();
-            return characterIds;
+            if (HasPlayedD2())
+            {
+                var characterDetails = RunGetAsync<CharacterEndpoint>($"Platform/Destiny/{MembershipType}/Account/{membershipId.membershipId}/Summary/");
+                var characterIds = characterDetails?.Response?.data?.characters?.Select(c => c.characterBase.characterId);
+
+                return characterIds.ToArray();
+            }
+
+            return null;
         }
+
+        private bool HasPlayedD2()
+        {
+            var kioskCollection = RunGetAsync<GetProfileKiosks>($"Platform/Destiny2/{MembershipType}/Profile/{MembershipIds[MembershipType]}/?components=Kiosks");
+            if (kioskCollection.ErrorCode == 1601)
+                return false;
+
+            return true;
+        }
+
+        private string MakeDestinyPlumbingRequest(string url)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(String.Format("https://destiny.plumbing/2/en/raw/{0}.json", url.Trim()));
+
+            request.Headers.Add("X-csrf", @"6645961750234506012");
+            request.Headers.Set(HttpRequestHeader.AcceptEncoding, "gzip, deflate");
+            request.Accept = "*/*";
+            request.KeepAlive = true;
+            request.AutomaticDecompression = DecompressionMethods.GZip;
+            HttpRequestCachePolicy noCachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
+            request.CachePolicy = noCachePolicy;
+
+            var response = (HttpWebResponse)request.GetResponse();
+            var responseHeader = response.Headers.ToString();
+
+            // Open the stream using a StreamReader for easy access.
+            var reader = new StreamReader(response.GetResponseStream());
+            var responseBody = reader.ReadToEnd();
+
+            // Clean up the streams.
+            reader.Close();
+            response.Close();
+
+            return responseBody;
+        }
+
+        public T GetPlumbing<T>(string type)
+        {
+            var plumbingText = MakeDestinyPlumbingRequest(type);
+            return JsonConvert.DeserializeObject<T>(plumbingText);
+        }
+
     }
 }

@@ -144,12 +144,10 @@ function ProcessD2Results(data) {
 }
 
 function ProcessResults(data) {
-    var obj = JSON.parse(data);
 
-    //alert(obj.Emblems.NextResetFormat);
-    // var expiryDate = "<a id=\"emblems\" class=\"js-tab-heading\">Emblems</a><span data-date=\"2018-06-27T08:00:00Z\" role=\"timer\" class=\"countdown js-countdown\"><span class=\"countdown__title\">Next reset</span><span class=\"countdown__units js-countdown-units\">27 Jun 2017</span></span>";
-    var expiryDate = "<a id=\"emblems\" class=\"js-tab-heading\">Emblems</a><span data-date=\"" + obj.Emblems.NextResetFormat + "\" role=\"timer\" class=\"countdown js-countdown\"><span class=\"countdown__title\">Next reset</span><span class=\"countdown__units js-countdown-units\">27 Jun 2017</span></span>";
-    $('#emblemH1').html(expiryDate);
+    var obj = JSON.parse(data);
+    // var expiryDate = "<a id=\"emblems\" class=\"js-tab-heading\">Emblems</a><span data-date=\"" + obj.Emblems.NextResetFormat + "\" role=\"timer\" class=\"countdown js-countdown\"><span class=\"countdown__title\">Next reset</span><span class=\"countdown__units js-countdown-units\">27 Jun 2017</span></span>";
+    // $('#emblemH1').html(expiryDate);
 
     if (obj.Emblems.ForSale.length > 0) {
         $('#emblemsForSale').empty();

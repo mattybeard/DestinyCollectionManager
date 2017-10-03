@@ -94,9 +94,6 @@
     <Compile Include="D2\InventorySparrow.cs">
       <DependentUpon>Destiny2Entities.tt</DependentUpon>
     </Compile>
-    <Compile Include="D2\UserInfo.cs">
-      <DependentUpon>Destiny2Entities.tt</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
